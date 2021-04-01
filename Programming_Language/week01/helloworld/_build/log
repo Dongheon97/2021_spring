@@ -1,0 +1,130 @@
+# dune exec ./main.exe
+# OCAMLPARAM: unset
+# Workspace root: /home/dongheon_97/helloworld
+$ /usr/bin/nproc > /tmp/dune1f05c7.output 2> /dev/null
+# Auto-detected concurrency: 4
+# disable binary cache
+$ /usr/bin/ocamlc.opt -config > /tmp/dunef0017b.output
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dyn
+#  ; merlin = true
+#  ; for_host = None
+#  ; fdo_target_exe = None
+#  ; build_dir = "default"
+#  ; toplevel_path =
+#      Some External "/home/dongheon_97/.opam/default/lib/toplevel"
+#  ; ocaml_bin = External "/usr/bin"
+#  ; ocaml = Ok External "/home/dongheon_97/.opam/default/bin/ocaml"
+#  ; ocamlc = External "/usr/bin/ocamlc.opt"
+#  ; ocamlopt = Ok External "/usr/bin/ocamlopt.opt"
+#  ; ocamldep = Ok External "/usr/bin/ocamldep.opt"
+#  ; ocamlmklib = Ok External "/usr/bin/ocamlmklib.opt"
+#  ; env =
+#      map
+#        { "DUNE_OCAML_HARDCODED" : "/home/dongheon_97/.opam/default/lib"
+#        ; "DUNE_OCAML_STDLIB" : "/usr/lib/ocaml"
+#        ; "DUNE_SOURCEROOT" : "/home/dongheon_97/helloworld"
+#        ; "INSIDE_DUNE" : "/home/dongheon_97/helloworld/_build/default"
+#        ; "OCAMLFIND_IGNORE_DUPS_IN" :
+#            "/home/dongheon_97/helloworld/_build/install/default/lib"
+#        ; "OCAMLPATH" :
+#            "/home/dongheon_97/helloworld/_build/install/default/lib"
+#        ; "OCAMLTOP_INCLUDE_PATH" :
+#            "/home/dongheon_97/helloworld/_build/install/default/lib/toplevel"
+#        ; "OCAML_COLOR" : "always"
+#        ; "OPAMCOLOR" : "always"
+#        }
+#  ; findlib_path = [ External "/home/dongheon_97/.opam/default/lib" ]
+#  ; arch_sixtyfour = true
+#  ; natdynlink_supported = true
+#  ; supports_shared_libraries = true
+#  ; ocaml_config =
+#      { version = "4.05.0"
+#      ; standard_library_default = "/usr/lib/ocaml"
+#      ; standard_library = "/usr/lib/ocaml"
+#      ; standard_runtime = "/usr/bin/ocamlrun"
+#      ; ccomp_type = "cc"
+#      ; c_compiler = "gcc"
+#      ; ocamlc_cflags =
+#          [ "-O2"
+#          ; "-fno-strict-aliasing"
+#          ; "-fwrapv"
+#          ; "-D_FILE_OFFSET_BITS=64"
+#          ; "-D_REENTRANT"
+#          ; "-fPIC"
+#          ]
+#      ; ocamlc_cppflags = []
+#      ; ocamlopt_cflags =
+#          [ "-O2"
+#          ; "-fno-strict-aliasing"
+#          ; "-fwrapv"
+#          ; "-fPIC"
+#          ; "-D_FILE_OFFSET_BITS=64"
+#          ; "-D_REENTRANT"
+#          ]
+#      ; ocamlopt_cppflags = []
+#      ; bytecomp_c_compiler =
+#          [ "gcc"
+#          ; "-O2"
+#          ; "-fno-strict-aliasing"
+#          ; "-fwrapv"
+#          ; "-D_FILE_OFFSET_BITS=64"
+#          ; "-D_REENTRANT"
+#          ; "-fPIC"
+#          ]
+#      ; bytecomp_c_libraries = [ "-lm"; "-ldl"; "-lcurses"; "-lpthread" ]
+#      ; native_c_compiler =
+#          [ "gcc"
+#          ; "-O2"
+#          ; "-fno-strict-aliasing"
+#          ; "-fwrapv"
+#          ; "-fPIC"
+#          ; "-D_FILE_OFFSET_BITS=64"
+#          ; "-D_REENTRANT"
+#          ]
+#      ; native_c_libraries = [ "-lm"; "-ldl" ]
+#      ; cc_profile = [ "-pg" ]
+#      ; architecture = "amd64"
+#      ; model = "default"
+#      ; int_size = 63
+#      ; word_size = 64
+#      ; system = "linux"
+#      ; asm = [ "as" ]
+#      ; asm_cfi_supported = true
+#      ; with_frame_pointers = false
+#      ; ext_exe = ""
+#      ; ext_obj = ".o"
+#      ; ext_asm = ".s"
+#      ; ext_lib = ".a"
+#      ; ext_dll = ".so"
+#      ; os_type = "Unix"
+#      ; default_executable_name = "a.out"
+#      ; systhread_supported = true
+#      ; host = "x86_64-pc-linux-gnu"
+#      ; target = "x86_64-pc-linux-gnu"
+#      ; profiling = true
+#      ; flambda = false
+#      ; spacetime = false
+#      ; safe_string = false
+#      ; exec_magic_number = "Caml1999X011"
+#      ; cmi_magic_number = "Caml1999I021"
+#      ; cmo_magic_number = "Caml1999O011"
+#      ; cma_magic_number = "Caml1999A012"
+#      ; cmx_magic_number = "Caml1999Y015"
+#      ; cmxa_magic_number = "Caml1999Z014"
+#      ; ast_impl_magic_number = "Caml1999M020"
+#      ; ast_intf_magic_number = "Caml1999N018"
+#      ; cmxs_magic_number = "Caml2007D002"
+#      ; cmt_magic_number = "Caml2012T009"
+#      ; natdynlink_supported = true
+#      ; supports_shared_libraries = true
+#      ; windows_unicode = false
+#      }
+#  }
+# Workspace root: /home/dongheon_97/helloworld
+$ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl main.ml) > _build/default/.main.eobjs/main.ml.d
+> File "main.ml", line 2, characters 14-20:
+> Error: Syntax error
+[2]
