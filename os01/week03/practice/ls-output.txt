@@ -1,0 +1,2 @@
+lrwxrwxrwx 1 root root 7  3월 30 11:35 /bin -> usr/bin
+lrwxrwxrwx 1 root root 7  3월 30 11:35 /bin -> usr/bin
