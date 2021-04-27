@@ -28,7 +28,7 @@ def my_padding(src, pad_shape, pad_type='zero'):
 def my_filtering(src, mask, pad_type='zero'):
     (h, w) = src.shape
     (h_m, w_m) = mask.shape
-    src_pad = my_padding(src, (h_m, w_m), pad_type)
+    src_pad = my_padding(src, (h_m//2, w_m//2), pad_type)
     dst = np.zeros((h, w))
     for row in range(h):
         for col in range(w):
