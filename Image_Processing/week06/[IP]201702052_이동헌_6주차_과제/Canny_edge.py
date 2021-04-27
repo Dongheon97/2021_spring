@@ -8,58 +8,6 @@ from my_library.DoG import get_DoG_filter
 from my_library.filtering import my_filtering
 from my_library.padding import my_padding
 
-##################################################
-## Linked List
-class Node:
-    def __init__(self, row, col):
-        self.row = row
-        self.col = col
-        self.next = None
-
-class LinkedList:
-    # 초기화 메소드
-    def __init__(self, ):
-        self.num_of_data = 0
-        self.head = Node(0, 0)
-
-
-    def add(self, row, col):
-        cur = self.head
-        new = Node(row, col)
-        self.head = new
-        new.next = cur
-        self.num_of_data += 1
-
-    def remove(self):
-        if (not self.isEmpty()):
-            cur = self.head
-            row = cur.row
-            col = cur.col
-            self.head = cur.next
-            self.num_of_data -= 1
-            return row, col
-
-    def isEmpty(self):
-        if(self.num_of_data == 0):
-            return True
-        return False
-
-    def next(self):
-        if self.current.next == None:
-            return None
-        self.before = self.current
-        self.current = self.current.next
-
-    def peek(self):
-        cur = self.head
-        row = cur.row
-        col = cur.col
-        return row, col
-
-    def size(self):
-        return self.num_of_data
-##################################################
-
 # low-pass filter를 적용 후 high-pass filter적용
 def apply_lowNhigh_pass_filter(src, fsize, sigma=1):
     # low-pass filter를 이용하여 blur효과
@@ -177,7 +125,6 @@ def double_thresholding(src):
     dst_pad = my_padding(dst, (1,1), 'zero')
     (h_p, w_p) = dst_pad.shape
 
-    weak = np.zeros((h, w))     # weak edge matrix
     for row in range(1, h_p-1):
         for col in range(1, w_p-1):
             # Strong Edge
@@ -204,13 +151,12 @@ def double_thresholding(src):
                       & (dst_pad[row + 1, col] <= low_threshold_value) & (dst_pad[row + 1, col + 1] <= low_threshold_value)):
                     dst[row - 1, col - 1] = 0
 
-                # weak edge
 
                 else:  # neighbor = not strong & all not weak
                     dst[row - 1, col - 1] = 100
 
-    #for i in range(30):
-        #dst = hystersis(dst)
+    for i in range(30):
+        dst = hysteresis(dst)
 
     for i in range(h):
         for j in range(w):
@@ -218,7 +164,7 @@ def double_thresholding(src):
                 dst[i, j]=0
     return dst
 
-def hystersis(dst):
+def hysteresis(dst):
     dst_pad = my_padding(dst, (1, 1), 'zero')
     (h_p, w_p) = dst_pad.shape
     for row in range(1 ,h_p-1):
@@ -229,7 +175,7 @@ def hystersis(dst):
                         | (dst_pad[row, col + 1] ==255) | (dst_pad[row + 1, col - 1] ==255)
                         | (dst_pad[row + 1, col] ==255) | (dst_pad[row + 1, col + 1] ==255)):
                     dst[row - 1, col - 1] = 255
-
+    return dst
 
 def my_canny_edge_detection(src, fsize=3, sigma=1):
     # low-pass filter를 이용하여 blur효과
