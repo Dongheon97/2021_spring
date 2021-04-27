@@ -14,15 +14,18 @@ from my_library.padding import my_padding
 def my_get_Gaussian2D_mask(msize, sigma=1):
     # 2D gaussian filter 만들기
     # msize = 정수
-    # msize//2 -> 떨어진 정도, (msize//2)+1 -> 범위
-    y, x = np.mgrid[-(msize//2):((msize//2)+1), -(msize//2):((msize//2)+1)]
+    # msize 가 짝수인지 정수인지 판별하여 각각에 따라 y, x 값 반환
+    odd_even = msize%2
+    if odd_even == 1:
+        y, x = np.mgrid[-(msize//2):(msize//2)+1, -(msize//2):(msize//2)+1]
+    else :
+        y, x = np.mgrid[-(msize//2):(msize//2), -(msize//2):(msize//2)]
 
     # 2차 gaussian mask 생성
     gaus2D = np.zeros((msize, msize), dtype=np.float32)
 
-    # 값을 계산하기 위한 mask 생성
-    mask = np.square(x) + np.square(y)
-    gaus2D += (1/(2*math.pi*(sigma**2))) * np.exp(-(mask)/(2*(sigma**2)))
+    # 공식 적용
+    gaus2D += (1/(2*math.pi*(sigma**2))) * np.exp(-((x**2)+(y**2))/(2*(sigma**2)))
 
     # gaus2D의 총 합 = 1
     gaus2D /= np.sum(gaus2D)
@@ -38,9 +41,8 @@ def my_get_Gaussian1D_mask(msize, sigma=1):
     # 1차 gaussian mask 생성
     gaus1D = np.zeros((1, msize), dtype=np.float32)
 
-    # 계산을 위한 mask 생성
-    mask = np.square(x)
-    gaus1D += (1/(math.sqrt(2*math.pi)*sigma)) * np.exp(-(mask)/(2*(sigma**2)))
+    # 공식 적용
+    gaus1D += (1/(math.sqrt(2*math.pi)*sigma)) * np.exp(-(x**2)/(2*(sigma**2)))
 
     # mask의 총 합 = 1
     gaus1D /= np.sum(gaus1D)

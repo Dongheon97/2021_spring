@@ -209,8 +209,8 @@ def double_thresholding(src):
                 else:  # neighbor = not strong & all not weak
                     dst[row - 1, col - 1] = 100
 
-    for i in range(30):
-        dst = hystersis(dst)
+    #for i in range(30):
+        #dst = hystersis(dst)
 
     for i in range(h):
         for j in range(w):
@@ -219,11 +219,11 @@ def double_thresholding(src):
     return dst
 
 def hystersis(dst):
-    dst_pad = my_padding(dst, (1,1), 'zero')
+    dst_pad = my_padding(dst, (1, 1), 'zero')
     (h_p, w_p) = dst_pad.shape
-    for row in range(1,h_p-1):
+    for row in range(1 ,h_p-1):
         for col in range(1, w_p-1):
-            if(dst[row, col] == 100):
+            if(dst_pad[row, col] == 100):
                 if ((dst[row - 1, col - 1] ==255) | (dst_pad[row - 1, col] ==255)
                         | (dst_pad[row - 1, col + 1] ==255) | (dst_pad[row, col - 1] ==255)
                         | (dst_pad[row, col + 1] ==255) | (dst_pad[row + 1, col - 1] ==255)

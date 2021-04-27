@@ -5,7 +5,7 @@ def my_padding(src, pad_shape, pad_type='zero'):
     # Zero Padding
     (h, w) = src.shape
     (p_h, p_w) = pad_shape
-    pad_img = np.zeros((h+2*p_h, w+2*p_w), np.float32)
+    pad_img = np.zeros((h+2*p_h, w+2*p_w))
     pad_img[p_h:p_h+h, p_w:p_w+w] = src
 
     # Repetition Padding
@@ -56,9 +56,9 @@ def my_filtering(src, ftype, fshape, pad_type='zero'):
 
     elif ftype == 'sharpening':
         print('sharpening filtering')
-        v1 = np.zeros((fshape[0], fshape[1]))            # mask's frame
-        v1[fshape[0]//2, fshape[1]//2] += 2              # middle value of mask's
-        v2 = np.full((fshape[0], fshape[1]), 1/sum)     # average mask
+        v1 = np.zeros(fshape)                    # mask's frame
+        v1[fshape[0]//2, fshape[1]//2] += 2      # middle value of mask's
+        v2 = np.full(fshape, 1/sum)              # average mask
         mask = v1-v2
         #mask 확인
         print(mask)
@@ -67,12 +67,11 @@ def my_filtering(src, ftype, fshape, pad_type='zero'):
         for col in range(w):
             src_mask = np.ones(fshape)
             src_mask *= src_pad[row:row+fshape[0], col:col+fshape[1]]
-
             masked = np.sum(src_mask*mask)
             # overflow 처리
-            if (masked<=0) :
+            if (masked <= 0):
                 masked = 0
-            if (masked>=255):
+            if (masked >= 255):
                 masked = 255
             dst[row, col] = masked
 
@@ -85,7 +84,7 @@ if __name__ == '__main__':
     src = cv2.imread('Lena.png', cv2.IMREAD_GRAYSCALE)
 
     # repetition padding test
-    rep_test = my_padding(src, (20,20))
+    rep_test = my_padding(src, (20,20), 'repetition')
 
     # 3x3 filter
     #dst_average = my_filtering(src, 'average', (3,3))

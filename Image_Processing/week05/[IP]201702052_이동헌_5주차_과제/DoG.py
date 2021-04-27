@@ -7,17 +7,14 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from my_library.filtering import my_filtering
 
 def get_DoG_filter(fsize, sigma=1):
-    ###################################################
-    # TODO                                            #
-    # DoG mask 완성                                    #
-    ###################################################
     # 1D gaussian mask 만들기
-    x = np.zeros((1, fsize), dtype=np.float32)
-    for i in range(fsize):
-        x[0, i] = i - (fsize // 2)
+    x = np.mgrid[-(fsize // 2):(fsize // 2) + 1, ]
+    #x = np.zeros((1, fsize), dtype=np.float32)
+    #for i in range(fsize):
+    #    x[0, i] = i - (fsize // 2)
     y = x.T
 
-    # 공식 적용 (1D -> 2D)
+    # Gaussian 공식 적용 (1D -> 2D)
     DoG_x = -(x/(sigma**2))*np.exp(-((x**2)+(y**2))/(2*(sigma**2)))
     DoG_y = -(y/(sigma**2))*np.exp(-((x**2)+(y**2))/(2*(sigma**2)))
 
@@ -31,10 +28,7 @@ def main():
     src = cv2.imread('Lena.png', cv2.IMREAD_GRAYSCALE)
     DoG_x, DoG_y = get_DoG_filter(fsize=3, sigma=1)
 
-    ###################################################
-    # TODO                                            #
-    # DoG mask sigma값 조절해서 mask 만들기              #
-    ###################################################
+    # DoG mask sigma값 조절해서 mask 만들기
     # DoG_x, DoG_y filter 확인
     x, y = get_DoG_filter(fsize=256, sigma=40)
     x = ((x - np.min(x)) / np.max(x - np.min(x)) * 255).astype(np.uint8)
@@ -47,8 +41,8 @@ def main():
     # TODO                                            #
     # dst_x, dst_y 를 사용하여 magnitude 계산            #
     ###################################################
-    dst = np.sqrt(dst_y**2) + np.sqrt(dst_x**2)
-    #dst = np.abs(dst_y) + np.abs(dst_x)
+    #dst = np.sqrt(dst_y**2) + np.sqrt(dst_x**2)
+    dst = np.abs(dst_y) + np.abs(dst_x)
 
     cv2.imshow('DoG_x filter', x)
     cv2.imshow('DoG_y filter', y)
