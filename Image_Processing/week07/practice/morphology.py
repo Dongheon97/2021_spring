@@ -8,45 +8,50 @@ from my_library.padding import my_padding
 
 
 def dilation(B, S):
-    # S로 filtering 하므로 S.shape//2 만큼 zero padding
-    B_pad = my_padding(B, (1, 1), 'zero')
-    (h_p, w_p) = B_pad.shape
-    B_zero = np.zeros((h_p, w_p))
-    for row in range(1, h_p-1):
-        for col in range(1, w_p-1):
-            if(B_pad[row, col] != 0):
-                B_zero[row - 1:(row + 1) + 1, col - 1:(col + 1) + 1] += S
-    # 값 보정
-    for row in range(h_p):
-        for col in range(w_p):
-            if(B_zero[row, col] > 1):
-                B_zero[row, col] = 1
-    # dst 값 추출
-    dst = B_zero[1:h_p-1, 1:w_p-1]
-    return dst
-
-def erosion(B, S):
-    (h, w) = B.shape
     h_s = S.shape[0] // 2
     w_s = S.shape[1] // 2
     # S로 filtering 하므로 S.shape//2 만큼 zero padding
     B_pad = my_padding(B, (h_s, w_s), 'zero')
     (h_p, w_p) = B_pad.shape
-    dst = np.zeros((h,w), dtype=np.uint8)
+    B_zero = np.zeros((h_p, w_p))
     for row in range(1, h_p - 1):
         for col in range(1, w_p - 1):
             if (B_pad[row, col] != 0):
-                if((B_pad[row-1, col-1] == 1) and (B_pad[row-1, col] == 1) and (B_pad[row-1, col+1] == 1)
-                    and (B_pad[row, col-1] == 1) and (B_pad[row, col+1] == 1)
-                    and (B_pad[row+1, col-1] == 1) and (B_pad[row+1, col] == 1) and (B_pad[row+1, col+1] == 1)):
-                    dst[row-1, col-1] += 1
+                B_zero[row - h_s:(row + h_s) + 1, col - w_s:(col + w_s) + 1] += S
+    # 값 보정
+    for row in range(h_p):
+        for col in range(w_p):
+            if (B_zero[row, col] > 1):
+                B_zero[row, col] = 1
+    dst = B_zero[h_s:h_p-h_s, w_s:w_p-w_s]
+    return dst
+
+def erosion(B, S):
+    h_s = S.shape[0] // 2
+    w_s = S.shape[1] // 2
+    # S로 filtering 하므로 S.shape//2 만큼 zero padding
+    B_pad = my_padding(B, (h_s, w_s), 'zero')
+    (h_p, w_p) = B_pad.shape
+    B_zero = np.zeros((h_p, w_p), dtype=np.uint8)
+    for row in range(1, h_p - 1):
+        for col in range(1, w_p - 1):
+            if (B_pad[row, col] != 0):
+                B_mask = B_pad[row - h_s:(row + h_s) + 1, col - w_s:(col + w_s) + 1]
+                # 0 또는 1의 값만 존재하므로 둘을 곱하여서 구분
+                mult_BS = np.multiply(B_mask.astype(np.int32), S)
+                # np.array_equal : array 비교 함수
+                if (np.array_equal(mult_BS, S)):
+                    B_zero[row, col] += 1
+    dst = B_zero[h_s:h_p-h_s, w_s:w_p-w_s]
     return dst
 
 def opening(B, S):
+    # (B erosion S) dilation S
     dst = dilation(erosion(B, S), S)
     return dst
 
 def closing(B, S):
+    # (B dilation S) erosion S
     dst = erosion(dilation(B, S), S)
     return dst
 
@@ -106,34 +111,104 @@ if __name__ == '__main__':
     print(img_closing)
     cv2.imwrite('morphology_closing.png', img_closing)
 
-
 '''
-#################################### dilation ##########################################
-    h_s = S.shape[0]//2
-    w_s = S.shape[1]//2
+##########################################################################################
+################################ 짝수 / 홀수 나눠서 #########################################
+def dilation(B, S):
+    h_s = S.shape[0] // 2
+    w_s = S.shape[1] // 2
     # S로 filtering 하므로 S.shape//2 만큼 zero padding
     B_pad = my_padding(B, (h_s, w_s), 'zero')
     (h_p, w_p) = B_pad.shape
     B_zero = np.zeros((h_p, w_p))
-    for row in range(1, h_p-1):
-        for col in range(1, w_p-1):
-            if(B_pad[row, col] != 0):
+    for row in range(1, h_p - 1):
+        for col in range(1, w_p - 1):
+            if (B_pad[row, col] != 0):
                 mod_h = S.shape[0] % 2
                 mod_w = S.shape[1] % 2
                 # S의 row, col 모두 홀수
-                if(mod_h==1 and mod_w==1):
+                if (mod_h == 1 and mod_w == 1):
                     B_zero[row - h_s:(row + h_s) + 1, col - w_s:(col + w_s) + 1] += S
                 # S의 row 짝수 col 홀수
                 elif (mod_h == 0 and mod_w == 1):
                     B_zero[row - h_s:(row + h_s), col - w_s:(col + w_s) + 1] += S
                 # S의 row 홀수 col 짝수
                 elif (mod_h == 1 and mod_w == 0):
-                    B_zero[row - h_s:(row + h_s)+1, col - w_s:(col + w_s)] += S
+                    B_zero[row - h_s:(row + h_s) + 1, col - w_s:(col + w_s)] += S
                 # S의 row, col 모두 짝수
                 else:
                     B_zero[row - h_s:(row + h_s), col - w_s:(col + w_s)] += S
+    # 값 보정
+    for row in range(h_p):
+        for col in range(w_p):
+            if (B_zero[row, col] > 1):
+                B_zero[row, col] = 1
+    dst = B_zero[h_s:h_p-h_s, w_s:w_p-w_s]
+    return dst
+
+
+def erosion(B, S):
+    h_s = S.shape[0] // 2
+    w_s = S.shape[1] // 2
+    # S로 filtering 하므로 S.shape//2 만큼 zero padding
+    B_pad = my_padding(B, (h_s, w_s), 'zero')
+    (h_p, w_p) = B_pad.shape
+    B_zero = np.zeros((h_p, w_p), dtype=np.uint8)
+    for row in range(1, h_p - 1):
+        for col in range(1, w_p - 1):
+            if (B_pad[row, col] != 0):
+                mod_h = S.shape[0] % 2
+                mod_w = S.shape[1] % 2
+                # S의 row, col 모두 홀수
+                if (mod_h == 1 and mod_w == 1):
+                    B_mask = B_pad[row - h_s:(row + h_s) + 1, col - w_s:(col + w_s) + 1]
+                    mult_BS = np.multiply(B_mask.astype(np.int32), S)
+                    if (np.array_equal(mult_BS, S)):
+                        B_zero[row, col] += 1
+                # S의 row 짝수 col 홀수
+                elif (mod_h == 0 and mod_w == 1):
+                    B_mask = B_pad[row - h_s:(row + h_s), col - w_s:(col + w_s) + 1]
+                    mult_BS = np.multiply(B_mask.astype(np.int32), S)
+                    if (mult_BS is S):
+                        B_zero[row, col] += 1
+                # S의 row 홀수 col 짝수
+                elif (mod_h == 1 and mod_w == 0):
+                    B_mask = B_pad[row - h_s:(row + h_s) + 1, col - w_s:(col + w_s)]
+                    mult_BS = np.multiply(B_mask.astype(np.int32), S)
+                    if (mult_BS is S):
+                        B_zero[row, col] += 1
+                # S의 row, col 모두 짝수
+                else:
+                    B_mask = B_pad[row - h_s:(row + h_s), col - w_s:(col + w_s)]
+                    mult_BS = np.multiply(B_mask.astype(np.int32), S)
+                    if (mult_BS is S):
+                        B_zero[row, col] += 1
+    dst = B_zero[h_s:h_p-h_s, w_s:w_p-w_s]
+    return dst
+
+
 ##########################################################################################
-####################################### erosion ##########################################
+################################### 3 by 3 일 때만 가능 ####################################
+def dilation(B, S):
+    # S로 filtering 하므로 S.shape//2 만큼 zero padding
+    B_pad = my_padding(B, (1, 1), 'zero')
+    (h_p, w_p) = B_pad.shape
+    B_zero = np.zeros((h_p, w_p))
+    for row in range(1, h_p-1):
+        for col in range(1, w_p-1):
+            if(B_pad[row, col] != 0):
+                B_zero[row - 1:(row + 1) + 1, col - 1:(col + 1) + 1] += S
+    # 값 보정
+    for row in range(h_p):
+        for col in range(w_p):
+            if(B_zero[row, col] > 1):
+                B_zero[row, col] = 1
+    # dst 값 추출
+    dst = B_zero[1:h_p-1, 1:w_p-1]
+    return dst
+
+def erosion(B, S):
+    (h, w) = B.shape
     h_s = S.shape[0] // 2
     w_s = S.shape[1] // 2
     # S로 filtering 하므로 S.shape//2 만큼 zero padding
@@ -143,31 +218,9 @@ if __name__ == '__main__':
     for row in range(1, h_p - 1):
         for col in range(1, w_p - 1):
             if (B_pad[row, col] != 0):
-                mod_h = S.shape[0] % 2
-                mod_w = S.shape[1] % 2
-                # S의 row, col 모두 홀수
-                if (mod_h == 1 and mod_w == 1):
-                    B_mask = B_pad[row - h_s:(row + h_s) + 1, col - w_s:(col + w_s) + 1]
-                    eros = np.multiply(B_mask.astype(np.int32), S)
-                    if (sum_eros == sum_S):
-                        B_zero[row, col] = 1
-                # S의 row 짝수 col 홀수
-                elif (mod_h == 0 and mod_w == 1):
-                    B_mask = B_pad[row - h_s:(row + h_s), col - w_s:(col + w_s) + 1]
-                    B_zero[row - h_s:(row + h_s), col - w_s:(col + w_s) + 1] += S
-                # S의 row 홀수 col 짝수
-                elif (mod_h == 1 and mod_w == 0):
-                    B_mask = B_pad[row - h_s:(row + h_s) + 1, col - w_s:(col + w_s)]
-                    B_zero[row - h_s:(row + h_s) + 1, col - w_s:(col + w_s)] += S
-                # S의 row, col 모두 짝수
-                else:
-                    B_mask = B_pad[row - h_s:(row + h_s), col - w_s:(col + w_s)]
-                    B_zero[row - h_s:(row + h_s), col - w_s:(col + w_s)] += S
-    # 값 보정
-    for row in range(h_p):
-        for col in range(w_p):
-            if (B_zero[row, col] > 1):
-                B_zero[row, col] = 1
-
-
+                if((B_pad[row-1, col-1] == 1) and (B_pad[row-1, col] == 1) and (B_pad[row-1, col+1] == 1)
+                    and (B_pad[row, col-1] == 1) and (B_pad[row, col+1] == 1)
+                    and (B_pad[row+1, col-1] == 1) and (B_pad[row+1, col] == 1) and (B_pad[row+1, col+1] == 1)):
+                    dst[row-1, col-1] += 1
+    return dst
 '''
