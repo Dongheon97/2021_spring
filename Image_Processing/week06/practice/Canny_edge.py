@@ -153,7 +153,7 @@ def non_maximum_supression(magnitude, angle):
 
     return largest_magnitude
 
-
+## 모범 답안
 # double_thresholding 수행
 def double_thresholding(src):
 
@@ -174,164 +174,42 @@ def double_thresholding(src):
     # low threshold값은 (high threshold * 0.4)로 구한다
     low_threshold_value = high_threshold_value * 0.4
 
-    dst_pad = my_padding(dst, (1,1), 'zero')
-    (h_p, w_p) = dst_pad.shape
-
-    weak = np.zeros((h, w))     # weak edge matrix
-    for row in range(1, h_p-1):
-        for col in range(1, w_p-1):
-            # Strong Edge
-            if (dst_pad[row, col] >= high_threshold_value):
-                dst[row-1, col-1] = 255
-
-            # None Edge
-            elif (dst_pad[row, col] <= low_threshold_value):
-                dst[row-1, col-1] = 0
-
-            # Weak Edge
+    for row in range(h):
+        for col in range(w):
+            if dst[row, col] >= high_threshold_value:
+                dst[row, col] =255
+            elif dst[row, col] <= low_threshold_value:
+                dst[row, col] = 0
             else:
-                # Strong edge neighbor
-                if ((dst_pad[row - 1, col - 1] >= high_threshold_value) | (dst_pad[row - 1, col] >= high_threshold_value)
-                        | (dst_pad[row - 1, col + 1] >= high_threshold_value) | (dst_pad[row, col - 1] >= high_threshold_value)
-                        | (dst_pad[row, col + 1] >= high_threshold_value) | (dst_pad[row + 1, col - 1] >= high_threshold_value)
-                        | (dst_pad[row + 1, col] >= high_threshold_value) | (dst_pad[row + 1, col + 1] >= high_threshold_value)):
-                    dst[row - 1, col - 1] = 255
-
-                # None edge neighbor
-                elif ((dst_pad[row - 1, col - 1] <= low_threshold_value) & (dst_pad[row - 1, col] <= low_threshold_value)
-                      & (dst_pad[row - 1, col + 1] <= low_threshold_value) & (dst_pad[row, col - 1] <= low_threshold_value)
-                      & (dst_pad[row, col + 1] <= low_threshold_value) & (dst_pad[row + 1, col - 1] <= low_threshold_value)
-                      & (dst_pad[row + 1, col] <= low_threshold_value) & (dst_pad[row + 1, col + 1] <= low_threshold_value)):
-                    dst[row - 1, col - 1] = 0
-
-                # weak edge
+                weak_edge = []
+                weak_edge.append((row, col))
+                search_weak_edge(dst, weak_edge, high_threshold_value, low_threshold_value)
+                if classify_edge(dst, weak_edge, high_threshold_value):
+                    for idx in range(len(weak_edge)):
+                        (r, c) = weak_edge[idx]
+                        dst[r, c] = 255
                 else:
-                    dst[row-1, col-1] = 100          # easy to find weak edge
-
-    dst = hysteresis(dst)
-
+                    for idx in range(len(weak_edge)):
+                        (r, c) = weak_edge[idx]
+                        dst[r, c] = 0
     return dst
 
-def hysteresis(dst):
-    (h, w) = dst.shape
-    # from upper_left to lower_right
-    upper_left = np.zeros((h, w))
-    dst_pad1 = my_padding(dst, (1,1), 'zero')
-    (h_1, w_1) = dst_pad1.shape
-    for row in range(1, h_1-1):
-        for col in range(1, w_1-1):
-            if(dst_pad1[row, col]==100):
-                if((dst_pad1[row-1, col-1]==255) | (dst_pad1[row-1, col]==255) | (dst_pad1[row-1, col+1]==255)
-                    | (dst_pad1[row, col-1]==255) | (dst_pad1[row, col+1]==255)
-                    | (dst_pad1[row+1, col-1]==255) | (dst_pad1[row+1, col]==255) | (dst_pad1[row+1, col+1]==255)):
-                    upper_left[row-1, col-1] += 255
-                else:
-                    upper_left[row-1, col-1] += 0
 
-    # from lower_right to upper_left
-    lower_right = np.zeros((h,w))
-    dst_pad2 = my_padding(dst, (1, 1), 'zero')
-    (h_2, w_2) = dst_pad2.shape
-    for row in range(h_2-1, 1):
-        for col in range(w_2-1, 1):
-            if (dst_pad1[row, col] == 100):
-                if ((dst_pad2[row - 1, col - 1] == 255) | (dst_pad2[row - 1, col] == 255) | (dst_pad2[row - 1, col + 1] == 255)
-                        | (dst_pad2[row, col - 1] == 255) | (dst_pad2[row, col + 1] == 255)
-                        | (dst_pad2[row + 1, col - 1] == 255) | (dst_pad2[row + 1, col] == 255) | (dst_pad2[row + 1, col + 1] == 255)):
-                    lower_right[row - 1, col - 1] += 255
-                else:
-                    lower_right[row - 1, col - 1] += 0
+def search_weak_edge(dst, edges, high_threshold_value, low_threshold_value):
+    (row, col) = edges[-1]
+    for i in range(-1, 2):
+        for j in range(-1, 2):
+            if dst[row+i, col+j] < high_threshold_value and dst[row+i, col+j] >= low_threshold_value:
+                if edges.count((row+i, col+j)) < 1:
+                    edges.append((row+i, col+j))
+                    search_weak_edge(dst,edges, high_threshold_value, low_threshold_value)
 
-    # from upper_right to lower_left
-    upper_right = np.zeros((h, w))
-    dst_pad3 = my_padding(dst, (1, 1), 'zero')
-    (h_3, w_3) = dst_pad3.shape
-    for row in range(w_3-1, 1):
-        for col in range(1, h_3-1):
-            if (dst_pad3[row, col] == 100):
-                if ((dst_pad3[row - 1, col - 1] == 255) | (dst_pad3[row - 1, col] == 255) | (dst_pad3[row - 1, col + 1] == 255)
-                        | (dst_pad3[row, col - 1] == 255) | (dst_pad3[row, col + 1] == 255)
-                        | (dst_pad3[row + 1, col - 1] == 255) | (dst_pad3[row + 1, col] == 255) | (dst_pad3[row + 1, col + 1] == 255)):
-                    upper_right[row - 1, col - 1] += 255
-                else:
-                    upper_right[row - 1, col - 1] += 0
-
-    # from lower_left to right_upper
-    lower_left = np.zeros((h, w))
-    dst_pad4 = my_padding(dst, (1, 1), 'zero')
-    (h_4, w_4) = dst_pad4.shape
-    for row in range(1, w_4-1):
-        for col in range(h_4-1, 1):
-            if (dst_pad4[row, col] == 100):
-                if ((dst_pad4[row - 1, col - 1] == 255) | (dst_pad4[row - 1, col] == 255) | (
-                        dst_pad4[row - 1, col + 1] == 255)
-                        | (dst_pad4[row, col - 1] == 255) | (dst_pad4[row, col + 1] == 255)
-                        | (dst_pad4[row + 1, col - 1] == 255) | (dst_pad4[row + 1, col] == 255) | (
-                                dst_pad4[row + 1, col + 1] == 255)):
-                    lower_left[row - 1, col - 1] += 255
-                else:
-                    lower_left[row - 1, col - 1] += 0
-
-    return (1/5)*(dst + upper_right + upper_left + lower_right + lower_left)
-'''
-    dst_pad2 = my_padding(dst, (1,1), 'zero')
-    (h_2, w_2) = dst_pad2.shape
-    for row in range(h_2-1, 1):
-        for col in range(w_2-1, 1):
-            if (dst[row - 1, col - 1] == 100):
-                if ((dst_pad2[row - 1, col - 1] == 255) or (dst_pad2[row - 1, col] == 255)
-                        or (dst_pad2[row - 1, col + 1] == 255) or (dst_pad2[row, col - 1] == 255)
-                        or (dst_pad2[row, col + 1] == 255) or (dst_pad2[row + 1, col - 1] == 255)
-                        or (dst_pad2[row + 1, col] == 255) or (dst_pad2[row + 1, col + 1] == 255)):
-                    # change to strong edge
-                    dst[row - 1, col - 1] = 255
-
-                elif ((dst_pad2[row - 1, col - 1] == 0) and (dst_pad2[row - 1, col] == 0)
-                      and (dst_pad2[row - 1, col + 1] == 0) and (dst_pad2[row, col - 1] == 0)
-                      and (dst_pad2[row, col + 1] == 0) and (dst_pad2[row + 1, col - 1] == 0)
-                      and (dst_pad2[row + 1, col] == 0) and (dst_pad2[row + 1, col + 1] == 0)):
-                    # change to weak edge
-                    dst[row - 1, col - 1] = 0
-
-    dst_pad3 = my_padding(dst, (1, 1), 'zero')
-    (h_3, w_3) = dst_pad3.shape
-    for row in range(1, w_3-1):
-        for col in range(1, h_3-1):
-            if (dst[row - 1, col - 1] == 100):
-                if ((dst_pad3[row - 1, col - 1] == 255) or (dst_pad3[row - 1, col] == 255)
-                        or (dst_pad3[row - 1, col + 1] == 255) or (dst_pad3[row, col - 1] == 255)
-                        or (dst_pad3[row, col + 1] == 255) or (dst_pad3[row + 1, col - 1] == 255)
-                        or (dst_pad3[row + 1, col] == 255) or (dst_pad3[row + 1, col + 1] == 255)):
-                    # change to strong edge
-                    dst[row - 1, col - 1] = 255
-
-                elif ((dst_pad3[row - 1, col - 1] == 0) and (dst_pad3[row - 1, col] == 0)
-                      and (dst_pad3[row - 1, col + 1] == 0) and (dst_pad3[row, col - 1] == 0)
-                      and (dst_pad3[row, col + 1] == 0) and (dst_pad3[row + 1, col - 1] == 0)
-                      and (dst_pad3[row + 1, col] == 0) and (dst_pad3[row + 1, col + 1] == 0)):
-                    # change to weak edge
-                    dst[row - 1, col - 1] = 0
-
-    dst_pad4 = my_padding(dst, (1, 1), 'zero')
-    (h_4, w_4) = dst_pad4.shape
-    for row in range(w_4-1, 1):
-        for col in range(h_4-1, 1):
-            if (dst[row - 1, col - 1] == 100):
-                if ((dst_pad4[row - 1, col - 1] == 255) or (dst_pad4[row - 1, col] == 255)
-                        or (dst_pad4[row - 1, col + 1] == 255) or (dst_pad4[row, col - 1] == 255)
-                        or (dst_pad4[row, col + 1] == 255) or (dst_pad4[row + 1, col - 1] == 255)
-                        or (dst_pad4[row + 1, col] == 255) or (dst_pad4[row + 1, col + 1] == 255)):
-                    # change to strong edge
-                    dst[row - 1, col - 1] = 255
-
-                elif ((dst_pad4[row - 1, col - 1] == 0) and (dst_pad4[row - 1, col] == 0)
-                      and (dst_pad4[row - 1, col + 1] == 0) and (dst_pad4[row, col - 1] == 0)
-                      and (dst_pad4[row, col + 1] == 0) and (dst_pad4[row + 1, col - 1] == 0)
-                      and (dst_pad4[row + 1, col] == 0) and (dst_pad4[row + 1, col + 1] == 0)):
-                    # change to weak edge
-                    dst[row - 1, col - 1] = 0
-'''
-
+def classify_edge(dst, weak_edge, high_threshold_value):
+    for idx in range(len(weak_edge)):
+        (row, col) = weak_edge[idx]
+        value = np.max(dst[row-1:row+2, col-1:col+2])
+        if value >= high_threshold_value:
+            return True
 
 def my_canny_edge_detection(src, fsize=3, sigma=1):
     # low-pass filter를 이용하여 blur효과
