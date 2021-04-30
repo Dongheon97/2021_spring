@@ -7,7 +7,7 @@ import os, sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from my_library.padding import my_padding
 from my_library.filtering import my_filtering
-from my_library.get_filter import my_get_Gaussian2D_mask
+from my_library.gaussian_mask import my_get_Gaussian2D_mask
 
 def my_normalize(src):
     dst = src.copy()
@@ -81,9 +81,9 @@ if __name__ == '__main__':
     cv2.imshow('gaus noise', src_noise)
     cv2.imshow('my gaussian', dst_gaus2D)
     cv2.imshow('my bilateral', dst)
-    tital_time = time.time() - start
-    print('\ntime : ', tital_time)
-    if tital_time > 25:
+    total_time = time.time() - start
+    print('\ntime : ', total_time)
+    if total_time > 25:
         print('감점 예정입니다. 코드 수정을 추천드립니다.')
     cv2.waitKey()
     cv2.destroyAllWindows()
