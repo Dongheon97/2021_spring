@@ -32,6 +32,7 @@ let interp (p : Ast.f1vae) : int =
         (* write your code *)
         match p with
         | Prog (def_list, expr) -> 
+                        begin
                         let rec impl def_lst fenv = 
                                 match def_lst with
                                 | def::t -> impl t (interp_d(fenv)(def))
@@ -39,4 +40,4 @@ let interp (p : Ast.f1vae) : int =
                         in
                         let fenv = impl def_list FEnv.empty in
                         interp_e (fenv) (Store.empty) (expr)
-                        
+                        end

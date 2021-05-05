@@ -1,0 +1,23 @@
+type token =
+    RSPAREN
+  | OP_PLUS
+  | OP_MINUS
+  | OP_EQ
+  | OP_COMMA
+  | NUMBER of int
+  | LSPAREN
+  | KW_LET
+  | KW_IN
+  | KW_ENDEF
+  | KW_DEF
+  | ID of string
+  | EOF
+val menhir_begin_marker : int
+val xv_snd_expr : Ast.expr
+val xv_plist : string list
+val xv_main : Ast.f1vae
+val xv_expr : Ast.expr
+val xv_elist : Ast.expr list
+val xv_decl_list : Ast.fundef list
+val xv_decl : Ast.fundef
+val menhir_end_marker : int
