@@ -24,46 +24,43 @@ def add_gaus_noise(src, mean=0, sigma=0.1):
     return my_normalize(dst)
 
 def my_bilateral(src, msize, sigma, sigma_r, pos_x, pos_y, pad_type='zero'):
-    ####################################################################################################
-    # TODO                                                                                             #
-    # my_bilateral 완성                                                                                 #
-    # mask를 만들 때 4중 for문으로 구현 시 감점(if문 fsize*fsize개를 사용해서 구현해도 감점) 실습영상 설명 참고      #
-    ####################################################################################################
     (h, w) = src.shape
-    pad = msize//2
-    img_pad = my_padding(src, (pad, pad), 'zero')
     dst = np.zeros((h, w))
-
+    m_s = int(msize / 2)
     for i in range(h):
-        print('\r%d / %d ...' %(i,h), end="")
+        print('\r%d / %d ...' % (i, h), end="")
         for j in range(w):
-            mask = np.zeros((msize, msize))
-            # mask value
-            for k in range(-pad, pad+1):
-                for l in range(-pad, pad+1):
-                    mask[k+pad][l+pad] += np.exp(-((i-k)**2/(2*sigma**2))-((i-l)**2/(2*sigma**2)))\
-                                 *np.exp(-((img_pad[i][j]-img_pad[i+k+pad][j+l+pad])**2)/(2*(sigma_r**2)))
+            if i < m_s or j < m_s:
+                dst[i, j] = src[i, j]
+            elif i >= h - m_s or j >= w - m_s:
+                dst[i, j] = src[i, j]
+            else:
+                mask = []
+                for k in range(i - m_s, i + m_s + 1):
+                    for l in range(j - m_s, j + m_s + 1):
+                        G = np.exp(-((((i - k) ** 2) + ((j - l) ** 2)) / (2 * sigma ** 2)))
+                        temp = src[i, j]
+                        temp = np.array(temp, dtype=int)
+                        temp2 = src[k, l]
+                        temp2 = np.array(temp2, dtype=int)
+                        B = np.exp(-(((temp - temp2) ** 2) / (2 * sigma_r ** 2)))
+                        mask.append(G * B)
+                mask = np.array(mask).reshape(msize, msize)
+                mask = mask / np.sum(mask)
 
-            # total sum = 1
-            mask /= np.sum(mask)
-            img_mask = img_pad[(i+pad)-pad:(i+pad)+pad+1, (j+pad)-pad:(j+pad)+pad+1]
-            bilateral = np.multiply(img_mask, mask)
-            value = np.sum(bilateral)
-
-            if i==pos_y and j == pos_x:
-                print()
-                print(mask.round(4))
-                mask_visual = cv2.resize(mask, (200, 200), interpolation = cv2.INTER_NEAREST)
-                mask_visual = mask_visual - mask_visual.min()
-                mask_visual = (mask_visual/mask_visual.max() * 255).astype(np.uint8)
-                cv2.imshow('mask', mask_visual)
-                img = img_pad[i:i+5, j:j+5]
-                img = cv2.resize(img, (200, 200), interpolation = cv2.INTER_NEAREST)
-                img = my_normalize(img)
-                cv2.imshow('img', img)
-
-            dst[i, j] += value
-
+                dst[i, j] = np.sum(src[i - m_s:i + m_s + 1, j - m_s:j + m_s + 1] * mask)
+                if i == 51 and j == 121:
+                    print(mask.sum())
+                    mask_img = cv2.resize(mask, (200, 200), interpolation=cv2.INTER_NEAREST)
+                    mask_img = my_normalize(mask_img)
+                    cv2.imshow('mask', mask_img)
+                    img = src[i - m_s:i + m_s + 1, j - m_s:j + m_s + 1]
+                    img = cv2.resize(img, (200, 200), interpolation=cv2.INTER_NEAREST)
+                    img = my_normalize(img)
+                    cv2.imshow('img', img)
+                    cv2.waitKey()
+                    cv2.destroyAllWindows()
+    dst = my_normalize(dst)
     return dst
 
 
@@ -85,7 +82,7 @@ if __name__ == '__main__':
     # TODO                                               #
     # my_bilateral, gaussian mask 채우기                  #
     ######################################################
-    dst = my_bilateral(src_noise, 5, 3, 80, pos_x, pos_y)
+    dst = my_bilateral(src_noise, 5, 5, 50, pos_x, pos_y)
     dst = my_normalize(dst)
 
     gaus2D = my_get_Gaussian2D_mask(5 , sigma = 10)
