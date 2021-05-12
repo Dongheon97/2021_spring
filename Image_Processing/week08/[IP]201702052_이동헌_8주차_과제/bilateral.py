@@ -40,7 +40,7 @@ def my_bilateral(src, msize, sigma, sigma_r, pos_x, pos_y, pad_type='zero'):
             mask /= np.sum(mask)
 
 
-            if i==65 and j == 453:
+            if i==pos_y and j == pos_x:
                 print()
                 print(mask.round(4))
                 mask_visual = cv2.resize(mask, (200, 200), interpolation = cv2.INTER_NEAREST)

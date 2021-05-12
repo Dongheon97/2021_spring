@@ -31,7 +31,7 @@ def Spatial2Frequency_mask(block, n = 8):
 
             mask[(v_*n):(v_*n)+n, (u_*n):(u_*n)+n] = C(u_, n=n)*C(v_, n=n)*temp
     #mask = np.round(mask, 2)
-    #print(mask)
+    print(mask)
     mask = my_normalize(mask)
     return mask
 
@@ -44,7 +44,7 @@ def my_normalize(src):
 
     (h, w) = src.shape
     max = src[0,0]
-    min = -src[0,0]
+    min = -src[0, 4]
     for row in range(h):
         for col in range(w):
             if(src[row, col] > max):
@@ -52,12 +52,11 @@ def my_normalize(src):
             elif(src[row, col] < min):
                 src[row, col] = min
 
-    print(src)
-
-    #dst = ((src - min) / (max - min) * 255).astype(np.uint8)
-    #dst = ((src - np.min(src)) / (np.max(src) - np.min(src)) * 255).astype(np.uint8)
+    #dst = (src - np.min(src)) / (np.max(src)-np.min(src)) * 255
     dst = ((src - np.min(src)) / np.max(src - np.min(src)) * 255).astype(np.uint8)
     return dst
+    # dst = ((src - min) / (max - min) * 255).astype(np.uint8)
+    # dst = ((src - np.min(src)) / np.max(src - np.min(src)) * 255).astype(np.uint8)
 
 if __name__ == '__main__':
     block_size = 4
