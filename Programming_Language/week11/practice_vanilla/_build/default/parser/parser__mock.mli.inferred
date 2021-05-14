@@ -1,0 +1,25 @@
+type token =
+    RSPAREN
+  | OP_RARROW
+  | OP_PLUS
+  | OP_MINUS
+  | OP_LT
+  | OP_EQ
+  | NUMBER of int
+  | LSPAREN
+  | KW_TRUE
+  | KW_THEN
+  | KW_LET
+  | KW_IN
+  | KW_IF
+  | KW_FUN
+  | KW_FALSE
+  | KW_ELSE
+  | ID of string
+  | EOF
+val menhir_begin_marker : int
+val xv_term : Ast.expr
+val xv_main : Ast.fvae
+val xv_id_list : string list
+val xv_expr : Ast.expr
+val menhir_end_marker : int
