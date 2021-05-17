@@ -13,9 +13,11 @@ def Spatial2Frequency_mask(block, n = 8):
     # dst = sub_image
     dst = np.zeros(block.shape)
     v, u = dst.shape
+
     y, x = np.mgrid[0:u, 0:v]
 
     mask = np.zeros((n*n, n*n))
+
 
     for v_ in range(v):
         for u_ in range(u):
@@ -62,6 +64,9 @@ if __name__ == '__main__':
     #크기가 너무 작으니 크기 키우기 (16x16) -> (320x320)
     mask = cv2.resize(mask, (320, 320), interpolation=cv2.INTER_NEAREST)
 
-    cv2.imshow('201702052 mask', mask)
+    cv2.imshow('201702052_mask', mask)
     cv2.waitKey()
     cv2.destroyAllWindows()
+
+
+
