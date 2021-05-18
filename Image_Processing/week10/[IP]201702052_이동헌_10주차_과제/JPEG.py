@@ -2,6 +2,12 @@ import numpy as np
 import cv2
 import time
 
+def C(w, n = 8):
+    if w == 0:
+        return (1/n)**0.5
+    else:
+        return (2/n)**0.5
+
 def Quantization_Luminance():
     luminance = np.array(
         [[16, 11, 10, 16, 24, 40, 51, 61],
@@ -20,6 +26,14 @@ def img2block(src, n=8):
     # img2block 완성                      #
     # img를 block으로 변환하기              #
     ######################################
+    (h, w) = src.shape
+    #block = np.zeros((n,n))
+    blocks = []
+
+    for row in range(h//n):
+        for col in range(w//n):
+            block = src[n*row:(n*row)+n, n*col:(n*col)+n]
+            blocks.append(block)
 
     return np.array(blocks)
 
@@ -29,14 +43,25 @@ def DCT(block, n=8):
     # TODO                               #
     # DCT 완성                            #
     ######################################
+    dst = np.zeros(block.shape)
+    v, u = dst.shape
+    y, x = np.mgrid[0:u, 0:v]
+
+    for v_ in range(v):
+        for u_ in range(u):
+            temp = block * np.cos(((2 * x + 1) * u_ * np.pi) / (2 * n)) * np.cos(((2 * y + 1) * v_ * np.pi) / (2 * n))
+            dst[(v_ * n):(v_ * n) + n, (u_ * n):(u_ * n) + n] = C(u_, n=n) * C(v_, n=n) * temp
+
     return np.round(dst)
 
-def my_zigzag_scanning(???):
+def my_zigzag_scanning(block):
     ######################################
     # TODO                               #
     # my_zigzag_scanning 완성             #
     ######################################
-    return ?
+    (h, w) = block.shape
+    arr = np.zeros((h+w))
+    return
 
 def DCT_inv(block, n = 8):
     ###################################################
@@ -44,7 +69,7 @@ def DCT_inv(block, n = 8):
     # DCT_inv 완성                                     #
     # DCT_inv 는 DCT와 다름.                            #
     ###################################################
-
+    dst = np.zeros((n, n))
     return np.round(dst)
 
 def block2img(blocks, src_shape, n = 8):
@@ -53,7 +78,7 @@ def block2img(blocks, src_shape, n = 8):
     # block2img 완성                                   #
     # 복구한 block들을 image로 만들기                     #
     ###################################################
-
+    dst = np.zeros(src_shape)
     return dst
 
 def Encoding(src, n=8):
@@ -121,7 +146,7 @@ def Decoding(zigzag, src_shape, n=8):
 
 def main():
     start = time.time()
-    src = cv2.imread('../imgs/Lena.png', cv2.IMREAD_GRAYSCALE)
+    src = cv2.imread('Lena.png', cv2.IMREAD_GRAYSCALE)
     comp, src_shape = Encoding(src, n=8)
 
     # 과제의 comp.npy, src_shape.npy를 복구할 때 아래 코드 사용하기(위의 2줄은 주석처리하고, 아래 2줄은 주석 풀기)
