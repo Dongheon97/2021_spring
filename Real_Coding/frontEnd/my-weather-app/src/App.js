@@ -7,7 +7,7 @@ import {
     Route,
     Link
 } from "react-router-dom";
-import About from "./pages/About"
+import Contact from "./pages/Contact"
 import Home from "./pages/Home"
 import Cities from "./pages/Cities"
 
@@ -19,7 +19,7 @@ function App() {
                 <Header region = "Korea" cityName = {city} />
                 <ul className="navigation">
                     <li>
-                        <Link to="/about">About</Link>
+                        <Link to="/contact">Contact</Link>
                     </li>
                     <li>
                         <Link to="/cities">Cities</Link>
@@ -29,8 +29,8 @@ function App() {
                     </li>
                 </ul>
                 <Switch>
-                    <Route path="/about">
-                        <About />
+                    <Route path="/contact">
+                        <Contact />
                     </Route>
                     <Route path="/cities">
                         <Cities />

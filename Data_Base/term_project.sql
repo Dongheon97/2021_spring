@@ -34,7 +34,7 @@ isbn NUMBER(5) NOT NULL,
 dateRented DATE NOT NULL,
 dateReturned DATE NOT NULL,
 cno NUMBER(5) NOT NULL,
-CONSTRAINT previousRental_pk PRIMARY KEY (dateRented),
+CONSTRAINT previousRental_pk PRIMARY KEY (isbn, dateRented),
 CONSTRAINT previousRental_fk1 FOREIGN KEY (isbn) REFERENCES EBOOK(isbn),
 CONSTRAINT previousRental_fk2 FOREIGN KEY (cno) REFERENCES CUSTOMER(cno)
 );

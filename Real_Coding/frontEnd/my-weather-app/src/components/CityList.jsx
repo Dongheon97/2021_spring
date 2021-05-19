@@ -1,6 +1,8 @@
-function CityList(props){
-    const {cities} = props.cities;
-    return(
+function CityList(props) {
+    // const cities = props.cities;
+    const { cities } = props;
+
+    return (
         <div>
             <h1>CityList</h1>
 
@@ -10,5 +12,7 @@ function CityList(props){
                 })}
             </ul>
         </div>
-    )
+    );
 }
+
+export default CityList;
