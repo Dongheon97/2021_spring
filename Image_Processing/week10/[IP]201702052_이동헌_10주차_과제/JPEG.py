@@ -2,6 +2,11 @@ import numpy as np
 import cv2
 import time
 
+# library add
+import os, sys
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+from my_library.padding import my_padding
+
 def C(w, n = 8):
     if w == 0:
         return (1/n)**0.5
@@ -27,15 +32,19 @@ def img2block(src, n=8):
     # img를 block으로 변환하기              #
     ######################################
     (h, w) = src.shape
-    #block = np.zeros((n,n))
+    # src의 row, col을 n으로 나눈 나머지
+    h_ = h%n
+    w_ = w%n
     blocks = []
+    for i in range(h//n):
+        for j in range(w//n):
+            blocks.append(src[i*n:i*n+n, j*n:j*n+n])
 
-    for row in range(h//n):
-        for col in range(w//n):
-            block = src[n*row:(n*row)+n, n*col:(n*col)+n]
-            blocks.append(block)
-
-    return blocks
+    if (h_ == 0 and w_ ==0):
+        return np.array(blocks)
+    else:
+        blocks = my_padding(src, (h_, w_), 'zero')
+        return np.array(blocks)
 
 
 def DCT(block, n=8):
@@ -43,15 +52,14 @@ def DCT(block, n=8):
     # TODO                               #
     # DCT 완성                            #
     ######################################
-    dst = np.zeros(block.shape)
-    v, u = dst.shape
-    y, x = np.mgrid[0:u, 0:v]
-
-    for v_ in range(v):
-        for u_ in range(u):
-            temp = block * np.cos(((2 * x + 1) * u_ * np.pi) / (2 * n)) * np.cos(((2 * y + 1) * v_ * np.pi) / (2 * n))
-            dst[(v_ * n):(v_ * n) + n, (u_ * n):(u_ * n) + n] = C(u_, n=n) * C(v_, n=n) * temp
-
+    dst = np.zeros((n, n))
+    for v in range(n):
+        for u in range(n):
+            y, x = np.mgrid[0:n, 0:n]
+            temp = block * np.cos(((2 * x + 1) * u * np.pi) / (2 * n)) * np.cos(((2 * y + 1) * v * np.pi) / (2 * n))
+            #dst[v, u] = C(u, n=n) * C(v, n=n) * temp
+            t = C(u, n=n) * C(v, n=n) * temp
+            print(t)
     return np.round(dst)
 
 def my_zigzag_scanning(block):
