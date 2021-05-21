@@ -35,7 +35,7 @@ def img2block(src, n=8):
             block = src[n*row:(n*row)+n, n*col:(n*col)+n]
             blocks.append(block)
 
-    return np.array(blocks)
+    return blocks
 
 
 def DCT(block, n=8):
