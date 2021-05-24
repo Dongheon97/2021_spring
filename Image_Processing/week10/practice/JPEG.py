@@ -58,21 +58,22 @@ def DCT(block, n=8):
     for v in range(n):
         for u in range(n):
             temp = block * np.cos(((2 * x + 1) * u * np.pi) / (2 * n)) * np.cos(((2 * y + 1) * v * np.pi) / (2 * n))
+            #dst[v, u] = C(u, n=n) * C(v, n=n) * temp
             dst[v, u] = C(v, n=n) * C(u, n=n) * np.sum(temp)
     return np.round(dst)
 
-def my_zigzag_scanning(block, block_size=8):
+def my_zigzag_scanning(block):
     ######################################
     # TODO                               #
     # my_zigzag_scanning 완성             #
     ######################################
-    #(h, w) = block.shape
-    zigzag = np.zeros((block_size*block_size))
+    (h, w) = block.shape
+    zigzag = np.zeros((h*w))
     index = 0
     row = 0
     col = 0
-    changed = block_size
-    for i in range(block_size):
+    changed = h
+    for i in range(h):
         changed += i
 
     # 초기값 [0, 0]
@@ -106,12 +107,12 @@ def my_zigzag_scanning(block, block_size=8):
             index += 1
 
     # 대각선을 기준으로 lower-right triangle
-    while index < (block_size * block_size):
+    while index < (h * w):
         direction = (row + col) % 2
         # 짝수인 경우
         if direction == 0:
             row += 1
-            while row < block_size-1:
+            while row < h-1:
                 zigzag[index] = block[row, col]
                 index += 1
                 col -= 1
@@ -121,125 +122,14 @@ def my_zigzag_scanning(block, block_size=8):
         # 홀수인 경우
         else:
             col += 1
-            while col < block_size-1:
+            while col < w-1:
                 zigzag[index] = block[row, col]
                 index += 1
                 row -= 1
                 col += 1
             zigzag[index] = block[row, col]
             index += 1
-
-    EOB = 0
-    # 거꾸로 탐색
-    for i in reversed(range(len(zigzag))):
-        if zigzag[i] != 0:
-            EOB = i
-            break
-    compressed = zigzag[0:EOB+1]
-
-    return compressed
-
-def reverse_zigzag_sacnning(zigzag, block_size=8):
-    block = np.zeros((block_size, block_size))
-
-    # decompression
-    decompressed = np.zeros((block_size*block_size))
-    decompressed[0:len(zigzag)] = zigzag
-
-    index = 0
-    changed = block_size
-    for i in range(block_size):
-        changed += i
-
-    # list => block
-    index = 0
-    row = 0
-    col = 0
-    changed = block_size
-    for i in range(block_size):
-        changed += i
-
-    # 초기값 [0, 0]
-    block[row, col] = zigzag[index]
-    index += 1
-
-    # 대각선을 기준으로 upper-left triangle
-    while index < changed:
-        # 방향 정하기
-        # (row+col)가 홀수라면 왼쪽 아래로, 짝수라면 오른쪽 위로 방향을 설정했다.
-        direction = (row + col) % 2
-        # 짝수인 경우
-        if direction == 0:
-            col += 1
-            while col != 0:
-                if index >= len(zigzag):
-                    block[row, col] = 0
-                else:
-                    block[row, col] = zigzag[index]
-                index += 1
-                row += 1
-                col -= 1
-            if index >= len(zigzag):
-                block[row, col] = 0
-            else:
-                block[row, col] = zigzag[index]
-            index += 1
-        # 홀수인 경우
-        else:
-            row += 1
-            while row != 0:
-                if index >= len(zigzag):
-                    block[row, col] = 0
-                else:
-                    block[row, col] = zigzag[index]
-                index += 1
-                row -= 1
-                col += 1
-            if index >= len(zigzag):
-                block[row, col] = 0
-            else:
-                block[row, col] = zigzag[index]
-            index += 1
-
-    # 대각선을 기준으로 lower-right triangle
-    while index < (block_size * block_size) :
-
-        direction = (row + col) % 2
-        # 짝수인 경우
-        if direction == 0:
-            row += 1
-            while row < block_size - 1:
-                if index >= len(zigzag):
-                    block[row, col] = 0
-                else:
-                    block[row, col] = zigzag[index]
-                index += 1
-                col -= 1
-                row += 1
-            if index >= len(zigzag):
-                block[row, col] = 0
-            else:
-                block[row, col] = zigzag[index]
-            index += 1
-        # 홀수인 경우
-        else:
-            col += 1
-            while col < block_size - 1:
-                if index >= len(zigzag):
-                    block[row, col] = 0
-                else:
-                    block[row, col] = zigzag[index]
-                index += 1
-
-                row -= 1
-                col += 1
-            if index >= len(zigzag):
-                block[row, col] = 0
-            else:
-                block[row, col] = zigzag[index]
-            index += 1
-
-    return block
+    return zigzag
 
 def DCT_inv(block, n = 8):
     ###################################################
@@ -248,17 +138,6 @@ def DCT_inv(block, n = 8):
     # DCT_inv 는 DCT와 다름.                            #
     ###################################################
     dst = np.zeros((n, n))
-    y, x = np.mgrid[0:n, 0:n]
-    arr_C = np.zeros((n,n))
-    for i in range(n):
-        for j in range(n):
-            arr_C[i, j] = C(i, n=8)*C(j, n=8)
-
-    for v in range(n):
-        for u in range(n):
-            temp = arr_C[v, u] * block * np.cos(((2 * x + 1) * u * np.pi) / (2 * n)) * np.cos(((2 * y + 1) * v * np.pi) / (2 * n))
-            # dst[v, u] = C(u, n=n) * C(v, n=n) * temp
-            dst[v, u] = np.sum(temp)
     return np.round(dst)
 
 def block2img(blocks, src_shape, n = 8):
@@ -267,30 +146,8 @@ def block2img(blocks, src_shape, n = 8):
     # block2img 완성                                   #
     # 복구한 block들을 image로 만들기                     #
     ###################################################
-
-    # len(blocks)의 루트 값으로 length를 구해 dst의 크기를 결정
-    length = np.sqrt(len(blocks))
-    dst = np.zeros((length, length))
-
-    index = 0
-    for row in range(length):
-        for col in range(length):
-            dst[row*length:(row*length)+8, col*length:(col*length):8] = blocks[index]
-            index += 1
-
-    # 원래의 이미지 복구
-    (h, w) = src_shape
-    h_ = h % 8
-    w_ = w % 8
-    # 원본 이미지의 h, w가 모두 8의 배수일 때
-    if (h_==0) and (w_==0):
-        return dst
-    # 원본 이미지의 h, w가 8의 배수가 아닐 때
-    else:
-
-
-
-
+    dst = np.zeros(src_shape)
+    return dst
 
 def Encoding(src, n=8):
     #################################################################################################
@@ -298,24 +155,22 @@ def Encoding(src, n=8):
     # Encoding 완성                                                                                  #
     # Encoding 함수를 참고용으로 첨부하긴 했는데 수정해서 사용하실 분은 수정하셔도 전혀 상관 없습니다.              #
     #################################################################################################
-    ''' zigzag test
-    #########################################################
+
+    ''' zigzag test'''
     img = np.array([
        [ 0,  1,  5,  6, 14, 15, 27, 28],
-       [ 2,  4,  7, 13, 16, 26, 29, 0],
-       [ 3,  8, 12, 17, 25, 30, 0, 0],
-       [ 9, 11, 18, 24, 31, 0, 0, 0],
-       [10, 19, 23, 32, 0, 0, 0, 0],
-       [20, 22, 33, 0, 0, 0, 0, 0],
-       [21, 34, 37, 0, 0, 0, 0, 0],
-       [35, 36, 0, 0, 0, 0, 0, 0],
+       [ 2,  4,  7, 13, 16, 26, 29, 42],
+       [ 3,  8, 12, 17, 25, 30, 41, 43],
+       [ 9, 11, 18, 24, 31, 40, 44, 53],
+       [10, 19, 23, 32, 39, 45, 52, 54],
+       [20, 22, 33, 38, 46, 51, 55, 60],
+       [21, 34, 37, 47, 50, 56, 59, 61],
+       [35, 36, 48, 49, 57, 58, 62, 63],
     ])
 
     zigzag = my_zigzag_scanning(img)
-    decompressed = reverse_zigzag_sacnning(zigzag)
-    print(decompressed)
-    #########################################################
-    '''
+    print(zigzag)
+
     print('<start Encoding>')
     # img -> blocks
     blocks = img2block(src, n=n)
@@ -336,6 +191,7 @@ def Encoding(src, n=8):
     zz = []
     for i in range(len(QnT)):
         zz.append(my_zigzag_scanning(QnT[i]))
+
     return zz, src.shape
 
 def Decoding(zigzag, src_shape, n=8):
@@ -349,7 +205,7 @@ def Decoding(zigzag, src_shape, n=8):
     # zigzag scanning
     blocks = []
     for i in range(len(zigzag)):
-        blocks.append(reverse_zigzag_sacnning(zigzag[i], block_size=n))
+        blocks.append(my_zigzag_scanning(zigzag[i], mode='decoding', block_size=n))
     blocks = np.array(blocks)
 
     # Denormalizing
@@ -369,6 +225,8 @@ def Decoding(zigzag, src_shape, n=8):
     dst = block2img(blocks_idct, src_shape=src_shape, n=n)
 
     return dst
+
+
 
 def main():
     start = time.time()
