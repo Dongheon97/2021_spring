@@ -2,11 +2,6 @@ import numpy as np
 import cv2
 import time
 
-# library add
-import os, sys
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-from my_library.padding import my_padding
-
 def C(w, n = 8):
     if w == 0:
         return (1/n)**0.5
@@ -43,7 +38,10 @@ def img2block(src, n=8):
                 blocks.append(src[i * n:i * n + n, j * n:j * n + n])
         return np.array(blocks).astype(np.float32)
     else:
-        blocks = my_padding(src, (h_, w_), 'zero')
+        if h_ != 0:
+            h += n-h_
+        if w_ != 0:
+            w += n-w_
         for i in range(h // n):
             for j in range(w // n):
                 blocks.append(src[i * n:i * n + n, j * n:j * n + n])
@@ -147,12 +145,8 @@ def my_zigzag_scanning(block, block_size=8):
 def reverse_zigzag_sacnning(zigzag, block_size=8):
     block = np.zeros((block_size, block_size))
 
-    # decompression
-    decompressed = np.zeros((block_size*block_size))
     EOB = len(zigzag)
-    decompressed[0:EOB-1] = zigzag[0:EOB-1]
 
-    index = 0
     changed = block_size
     for i in range(block_size):
         changed += i
@@ -285,24 +279,25 @@ def block2img(blocks, src_shape, n = 8):
 
     # 원본 이미지의 h, w가 모두 n의 배수일 때 (512, 512)
     if (h_==0) and (w_==0):
-        # len(blocks)의 루트 값으로 length를 구해 dst의 크기를 결정
-        length = np.sqrt(len(blocks)).astype(np.int32)
-        dst = np.zeros((n * length, n * length))
+        dst = np.zeros((h, w))
 
         index = 0
-        for row in range(length):
-            for col in range(length):
+        for row in range(h//n):
+            for col in range(w//n):
                 dst[row * n:(row * n) + n, col * n:(col * n) + n] = blocks[index]
                 index += 1
         return dst.astype(np.uint8)
 
-    # 원본 이미지의 h, w가 8의 배수가 아닐 때
+    # 원본 이미지의 h, w가 n의 배수가 아닐 때
     else:
-        dst = np.zeros(((n-h_)+h, w_+w))
-        (height, width) = dst.shape
+        if h_ != 0:
+            h += n-h_
+        if w_ != 0:
+            w += n-w_
+        dst = np.zeros((h, w))
         index = 0
-        for row in range(height//n):
-            for col in range(width//n):
+        for row in range(h//n):
+            for col in range(w//n):
                 if index < len(blocks):
                     dst[row * n:(row * n) + n, col * n:(col * n) + n] = blocks[index]
                     index += 1
@@ -311,7 +306,7 @@ def block2img(blocks, src_shape, n = 8):
 
         # normalize
         dst = (dst - np.min(dst)) / np.max(dst - np.min(dst)) * 255
-        return dst[0:h, 0:w].astype(np.uint8)
+        return dst[0:h-(n-h_), 0:w].astype(np.uint8)
 
 
 def Encoding(src, n=8):
