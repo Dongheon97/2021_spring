@@ -36,14 +36,17 @@ def img2block(src, n=8):
     h_ = h%n
     w_ = w%n
     blocks = []
-    for i in range(h//n):
-        for j in range(w//n):
-            blocks.append(src[i*n:i*n+n, j*n:j*n+n])
 
     if (h_ == 0 and w_ ==0):
+        for i in range(h // n):
+            for j in range(w // n):
+                blocks.append(src[i * n:i * n + n, j * n:j * n + n])
         return np.array(blocks).astype(np.float32)
     else:
         blocks = my_padding(src, (h_, w_), 'zero')
+        for i in range(h // n):
+            for j in range(w // n):
+                blocks.append(src[i * n:i * n + n, j * n:j * n + n])
         return np.array(blocks).astype(np.float32)
 
 
@@ -275,26 +278,40 @@ def block2img(blocks, src_shape, n = 8):
     # 복구한 block들을 image로 만들기                     #
     ###################################################
 
-    # len(blocks)의 루트 값으로 length를 구해 dst의 크기를 결정
-    length = np.sqrt(len(blocks)).astype(np.int32)
-    dst = np.zeros((n*length, n*length))
-
-    index = 0
-    for row in range(length):
-        for col in range(length):
-            dst[row*n:(row*n)+n, col*n:(col*n)+n] = blocks[index]
-            index += 1
-
     # 원래의 이미지 복구
     (h, w) = src_shape
-    h_ = h % 8
-    w_ = w % 8
-    # 원본 이미지의 h, w가 모두 8의 배수일 때
+    h_ = h % n
+    w_ = w % n
+
+    # 원본 이미지의 h, w가 모두 n의 배수일 때 (512, 512)
     if (h_==0) and (w_==0):
+        # len(blocks)의 루트 값으로 length를 구해 dst의 크기를 결정
+        length = np.sqrt(len(blocks)).astype(np.int32)
+        dst = np.zeros((n * length, n * length))
+
+        index = 0
+        for row in range(length):
+            for col in range(length):
+                dst[row * n:(row * n) + n, col * n:(col * n) + n] = blocks[index]
+                index += 1
         return dst.astype(np.uint8)
+
     # 원본 이미지의 h, w가 8의 배수가 아닐 때
     else:
-        return dst[h_:h_+h, w_:w_+w].astype(np.uint8)
+        dst = np.zeros(((n-h_)+h, w_+w))
+        (height, width) = dst.shape
+        index = 0
+        for row in range(height//n):
+            for col in range(width//n):
+                if index < len(blocks):
+                    dst[row * n:(row * n) + n, col * n:(col * n) + n] = blocks[index]
+                    index += 1
+                else:
+                    break
+
+        # normalize
+        dst = (dst - np.min(dst)) / np.max(dst - np.min(dst)) * 255
+        return dst[0:h, 0:w].astype(np.uint8)
 
 
 def Encoding(src, n=8):
@@ -359,12 +376,12 @@ def Decoding(zigzag, src_shape, n=8):
 
 def main():
     start = time.time()
-    src = cv2.imread('Lena.png', cv2.IMREAD_GRAYSCALE)
-    comp, src_shape = Encoding(src, n=8)
+    #src = cv2.imread('Lena.png', cv2.IMREAD_GRAYSCALE)
+    #comp, src_shape = Encoding(src, n=8)
 
     # 과제의 comp.npy, src_shape.npy를 복구할 때 아래 코드 사용하기(위의 2줄은 주석처리하고, 아래 2줄은 주석 풀기)
-    #comp = np.load('comp.npy', allow_pickle=True)
-    #src_shape = np.load('src_shape.npy')
+    comp = np.load('comp.npy', allow_pickle=True)
+    src_shape = np.load('src_shape.npy')
 
     recover_img = Decoding(comp, src_shape, n=8)
     total_time = time.time() - start
