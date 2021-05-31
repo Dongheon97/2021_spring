@@ -92,6 +92,7 @@ def backward(src, M):
 
 
 def main():
+
     src = np.zeros((250, 250), dtype=np.uint8)
     box = np.full((50, 50), 250, dtype=np.uint8)
 
@@ -101,6 +102,30 @@ def main():
     M_tr = np.array([[1, 0, 50],
                     [0, 1, 100],
                     [0, 0, 1]])
+
+    M = np.array([[0.43564, 0.26498, -10],
+                  [-0.07704, 0.50405, 22],
+                  [0, 0, 1
+                   ]])
+    img = np.zeros((300, 500))
+    h, w = img.shape
+    row1 = np.ceil(np.dot(M, np.array([[0], [0], [1]])))  # (0,0)이 변환되는 좌표
+    row2 = np.ceil(np.dot(M, np.array([[h], [w], [1]]))) # (h, w)가 변환되는 좌표
+    col1 = np.ceil(np.dot(M, np.array([[0], [w], [1]])))  # (h, 0)이 변환되는 좌표
+    col2 = np.ceil(np.dot(M, np.array([[h], [0], [1]])))  # (0, w)가 변환되는 좌표
+
+    h1 = row2[0] - row1[0]
+    w1 = col1[1] - col2[1]
+
+    M_inv = np.linalg.inv(M)
+
+    row11 = np.dot(M_inv, np.array([[0], [0], [1]]))  # (0,0)이 변환되는 좌표
+    row22 = np.dot(M_inv, np.array([[h1], [w1], [1]]))  # (h, w)가 변환되는 좌표
+    col11 = np.dot(M_inv, np.array([[0], [w1], [1]]))  # (h, 0)이 변환되는 좌표
+    col22 = np.dot(M_inv, np.array([[h1], [0], [1]]))  # (0, w)가 변환되는 좌표
+
+    h2 = row2[0] - row1[0]
+    w2 = col1[1] - col2[1]
 
     dst_for = forward(src, (M_tr))
     dst_back = backward(src, (M_tr))
