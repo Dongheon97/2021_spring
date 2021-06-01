@@ -13,6 +13,7 @@ def forward(src, M, fit=False):
     h, w = src.shape
 
     # fit 한 경우 (window 밖은 잘라낸다)
+    # fit size
     if (fit == True):
         dst = np.zeros((src.shape))
         N = np.zeros(dst.shape)
@@ -49,14 +50,18 @@ def forward(src, M, fit=False):
                     dst[dst_row_bottom, dst_col_right] += src[row, col]
                     N[dst_row_bottom, dst_col_right] += 1
 
-    # fit == False
+    # fit == False // Full size
     else:
-        row1 = np.dot(M, np.array([[0], [0], [1]]))         # (0,0)이 변환되는 좌표
-        row2 = np.dot(M, np.array([[w], [h], [1]]))         # (h, w)가 변환되는 좌표
-        col1 = np.dot(M, np.array([[0], [h], [1]]))         # (h, 0)이 변환되는 좌표
-        col2 = np.dot(M, np.array([[w], [0], [1]]))         # (0, w)가 변환되는 좌표
 
-        dst = np.zeros((src.shape))
+        col1 = np.ceil(np.dot(M, np.array([[0], [0], [1]])))  # (0,0)이 변환되는 좌표
+        col2 = np.ceil(np.dot(M, np.array([[h], [w], [1]])))  # (h, w)가 변환되는 좌표
+        row1 = np.ceil(np.dot(M, np.array([[h], [0], [1]])))  # (h, 0)이 변환되는 좌표
+        row2 = np.ceil(np.dot(M, np.array([[0], [w], [1]])))  # (0, w)가 변환되는 좌표
+
+        col_ = (col2[0][0] - col1[0][0]).astype(np.int32)
+        row_ = (row2[1][0] - row1[1][0]).astype(np.int32)
+
+        dst = np.zeros((row_, col_+1))
         N = np.zeros(dst.shape)
 
         for row in range(h):
@@ -88,7 +93,6 @@ def forward(src, M, fit=False):
                     dst[dst_row_bottom, dst_col_right] += src[row, col]
                     N[dst_row_bottom, dst_col_right] += 1
 
-
     dst = np.round(dst / (N + 1E-6))
     dst = dst.astype(np.uint8)
     return dst
@@ -102,11 +106,13 @@ def backward(src, M, fit=False):
     print('M')
     print(M)
 
+    h_src, w_src = src.shape
+
+    # fit size
     if (fit == True):
-        dst = np.zeros((500, 500))
+        dst = np.zeros((h_src, w_src))
 
         h, w = dst.shape
-        h_src, w_src = src.shape
 
         # M inv 구하기
         M_inv = np.linalg.inv(M)
@@ -140,13 +146,59 @@ def backward(src, M, fit=False):
                             + (s) * (t) * src[src_row_bottom, src_col_right]
 
                 dst[row, col] = intensity
+    '''
+    # full size
+    else:
 
+        col1 = np.ceil(np.dot(M, np.array([[0], [0], [1]])))  # (0,0)이 변환되는 좌표
+        col2 = np.ceil(np.dot(M, np.array([[h_src], [w_src], [1]])))  # (h, w)가 변환되는 좌표
+        row1 = np.ceil(np.dot(M, np.array([[h_src], [0], [1]])))  # (h, 0)이 변환되는 좌표
+        row2 = np.ceil(np.dot(M, np.array([[0], [w_src], [1]])))  # (0, w)가 변환되는 좌표
+
+        col_ = (col2[0][0] - col1[0][0]).astype(np.int32)
+        row_ = (row2[1][0] - row1[1][0]).astype(np.int32)
+
+        dst = np.zeros((row_, col_ + 1))
+
+
+        # M inv 구하기
+        M_inv = np.linalg.inv(M)
+        print('M inv')
+        print(M_inv)
+
+        for row in range(h_src):
+            for col in range(w_src):
+                P_dst = np.array([[col], [row], [1]])
+
+                P = np.dot(M_inv, P_dst)
+
+                src_col = P[0][0]
+                src_row = P[1][0]
+
+                src_col_right = int(np.ceil(src_col))
+                src_col_left = int(src_col)
+
+                src_row_bottom = int(np.ceil(src_row))
+                src_row_top = int(src_row)
+
+                if src_col_right >= w_src or src_row_bottom >= h_src:
+                    continue
+
+                s = src_col - src_col_left
+                t = src_row - src_row_top
+
+                intensity = (1 - s) * (1 - t) * src[src_row_top, src_col_left] \
+                            + (s) * (1 - t) * src[src_row_top, src_col_right] \
+                            + (1 - s) * (t) * src[src_row_bottom, src_col_left] \
+                            + (s) * (t) * src[src_row_bottom, src_col_right]
+
+                dst[row, col] = intensity
+    '''
     dst = dst.astype(np.uint8)
     return dst
 
 def main():
     src = cv2.imread('Lena.png', cv2.IMREAD_GRAYSCALE)
-
     #####################################################
     # TODO                                              #
     # M 완성                                             #
@@ -180,24 +232,30 @@ def main():
     # rotation -> translation -> Scale -> Shear
     M = np.dot(M_sh, np.dot(M_sc, np.dot(M_tr, M_ro)))
 
+
     # fit이 True인 경우와 False인 경우 다 해야 함.
     fit = True
+
+
     # forward
     dst_for = forward(src, M, fit=fit)
     dst_for2 = forward(dst_for, np.linalg.inv(M), fit=fit)
-    cv2.imshow('forward2', dst_for2)
 
     #dst_for = forward(src, M)
     #dst_for2 = forward(dst_for, np.linalg.inv(M))
-    #cv2.imshow('forward2', dst_for2)
+
     # backward
     dst_back = backward(src, M, fit=fit)
     dst_back2 = backward(dst_back, np.linalg.inv(M), fit=fit)
-    cv2.imshow('backward2', dst_back2)
+
 
     cv2.imshow('original', src)
-    #cv2.imshow('forward2', dst_for2)
-    #cv2.imshow('backward2', dst_back2)
+    cv2.imshow('forward1', dst_for)
+
+    cv2.imshow('backward1', dst_back)
+    cv2.imshow('forward2', dst_for2)
+    cv2.imshow('backward2', dst_back2)
+
     cv2.waitKey()
     cv2.destroyAllWindows()
 

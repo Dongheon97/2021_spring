@@ -5,10 +5,15 @@ def forward(src, M):
     print('< forward >')
     print('M')
     print(M)
-    dst = np.zeros((500, 500))
+    h, w = src.shape
+
+    dst = np.zeros((h+20, w+34))
+    img = dst.copy()
+    img[10:h+10, 17:w+17] = src
+    src = img.copy()
     N = np.zeros(dst.shape)
 
-    h, w = src.shape
+
     for row in range(h):
         for col in range(w):
             P = np.array([[col], [row], [1]])
@@ -46,7 +51,7 @@ def backward(src, M):
     print('< backward >')
     print('M')
     print(M)
-    dst = np.zeros((500, 500))
+    dst = np.zeros((200, 200))
 
     # backward 에서는 필요 없음
     # N = np.zeros(dst.shape)
@@ -74,7 +79,6 @@ def backward(src, M):
             src_row_bottom = int(np.ceil(src_row))
             src_row_top = int(src_row)
 
-
             if src_col_right >= w_src or src_row_bottom >= h_src:
                 continue
 
@@ -93,10 +97,10 @@ def backward(src, M):
 
 def main():
 
-    src = np.zeros((250, 250), dtype=np.uint8)
-    box = np.full((50, 50), 250, dtype=np.uint8)
+    src = np.full((100, 100), 255, dtype=np.uint8)
+    #box = np.full((20, 20), 250, dtype=np.uint8)
 
-    src[50:100, 50:100] = box
+    #src[30:50, 30:50] = box
 
     # translation
     M_tr = np.array([[1, 0, 50],
@@ -107,13 +111,19 @@ def main():
                   [-0.07704, 0.50405, 22],
                   [0, 0, 1
                    ]])
-    img = np.zeros((300, 500))
-    h, w = img.shape
+
+
+
+    h, w = (512, 512)
+    img = np.full((h, w), 255, dtype = np.uint8)
+
     row1 = np.ceil(np.dot(M, np.array([[0], [0], [1]])))  # (0,0)이 변환되는 좌표
     row2 = np.ceil(np.dot(M, np.array([[h], [w], [1]]))) # (h, w)가 변환되는 좌표
     col1 = np.ceil(np.dot(M, np.array([[0], [w], [1]])))  # (h, 0)이 변환되는 좌표
     col2 = np.ceil(np.dot(M, np.array([[h], [0], [1]])))  # (0, w)가 변환되는 좌표
 
+    print(M)
+    '''
     h1 = row2[0] - row1[0]
     w1 = col1[1] - col2[1]
 
@@ -126,19 +136,25 @@ def main():
 
     h2 = row2[0] - row1[0]
     w2 = col1[1] - col2[1]
-
+    
     dst_for = forward(src, (M_tr))
     dst_back = backward(src, (M_tr))
+    
+    dst_for = forward(src, (M_tr))
+    dst_back = backward(src, (M_tr))
+    '''
 
-    dst_for2 = forward(dst_for, np.linalg.inv(M_tr))
-    dst_back2 = backward(dst_back, np.linalg.inv(M_tr))
+    dst_for = forward(img, (M))
+    #dst_back = backward(img, (M))
+    dst_for2 = forward(dst_for, np.linalg.inv(M))
+    #dst_back2 = backward(dst_back, np.linalg.inv(M_tr))
 
     cv2.imshow('original', src)
     cv2.imshow('forward', dst_for)
-    cv2.imshow('backward', dst_back)
+    #cv2.imshow('backward', dst_back)
 
     cv2.imshow('forward2', dst_for2)
-    cv2.imshow('backward2', dst_back2)
+    #cv2.imshow('backward2', dst_back2)
 
     cv2.waitKey()
     cv2.destroyAllWindows()
