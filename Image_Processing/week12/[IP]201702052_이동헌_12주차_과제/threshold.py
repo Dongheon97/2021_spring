@@ -12,7 +12,6 @@ def get_hist(src):
 
     return hist
 
-
 def threshold(src, value):
     h, w = src.shape
     dst = np.zeros((h, w), dtype=np.uint8)
@@ -39,9 +38,9 @@ def get_threshold(src, type='rice'):
         # 한 줄로 작성하세요
         p = hist/(h*w)
 
-    #else:
+    else:
         # 여러줄로 작성하셔도 상관 없습니다.
-        #p = ???
+        p = ???
 
     k_opt_warw = []
     k_opt_warb = []
@@ -105,7 +104,7 @@ def rice_main():
     cv2.waitKey()
     cv2.destroyAllWindows()
 
-'''
+
 def meat_main():
     meat = cv2.imread('meat.png', cv2.IMREAD_GRAYSCALE)
     mask = cv2.imread('mask.TIFF', cv2.IMREAD_GRAYSCALE)
@@ -116,7 +115,8 @@ def meat_main():
     #####################################################
 
 
-    dst, val = get_threshold(meat, 'meat')
+
+    dst, val = get_threshold(src, 'meat')
     #tip : 4칙연산(그냥 사칙연산 혹은 cv2.사칙연산 잘 사용하기)
     final = ???
 
@@ -125,7 +125,7 @@ def meat_main():
 
     cv2.waitKey()
     cv2.destroyAllWindows()
-'''
+
 
 def main():
     rice_main()
