@@ -86,26 +86,39 @@ def my_hist_equal(src):
 
 if __name__ == '__main__':
 
-    src = cv2.imread('fruits_div3.jpg', cv2.IMREAD_GRAYSCALE)
-    hist = my_calcHist(src)
-    dst, hist_equal = my_hist_equal(src)
+    src = cv2.imread('wind_speed_03.png', cv2.IMREAD_GRAYSCALE)
+    #dst1 = cv2.threshold(np.array(src), 0, 255, cv2.THRESH_OTSU)
+    #cv2.imwrite('./wind_thresholded.png', dst)
+
+    h, w = src.shape
+    dst = np.zeros((h, w), dtype=np.uint8)
+    for row in range(h):
+        for col in range(w):
+            if (src[row][col] >= 100):
+                dst[row][col] = 255
+
+    cv2.imshow('src', src)
+    cv2.imshow('dst', dst)
+    cv2.imwrite('./wind_thresholded.png', dst)
+    #hist = my_calcHist(src)
+    #dst, hist_equal = my_hist_equal(src)
 
 
     # equalization before image
-    plt.figure(figsize=(8, 5))
-    cv2.imshow('original', src)
-    binX = np.arange(len(hist))
-    plt.title('my histogram')
-    plt.bar(binX, hist, width=0.5, color='g')
-    plt.show()
+    #plt.figure(figsize=(8, 5))
+    #cv2.imshow('original', src)
+    #binX = np.arange(len(hist))
+    #plt.title('my histogram')
+    #plt.bar(binX, hist, width=0.5, color='g')
+    #plt.show()
 
     # equalization after image
-    plt.figure(figsize=(8, 5))
-    cv2.imshow('equalizetion after image', dst)
-    binX = np.arange(len(hist_equal))
-    plt.title('my histogram equalization')
-    plt.bar(binX, hist_equal, width=0.5, color='g')
-    plt.show()
+    #plt.figure(figsize=(8, 5))
+    #cv2.imshow('equalizetion after image', dst)
+    #binX = np.arange(len(hist_equal))
+    #plt.title('my histogram equalization')
+    #plt.bar(binX, hist_equal, width=0.5, color='g')
+    #plt.show()
 
     cv2.waitKey()
     cv2.destroyAllWindows()
