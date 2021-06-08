@@ -1,0 +1,11 @@
+#! /bin/bash
+
+footer=".bak"
+
+for i in {a..z}; do
+	FILE="bin/$i.txt"
+	if [[ -e $FILE ]]; then cp "$FILE" "$FILE""$footer"; fi
+done
+
+
+
