@@ -6,12 +6,12 @@ let rec interp_e (e : Ast.expr) ((env, mem) : Env.t * Mem.t) : Mem.value =
         | Num n -> NumV n
         | Bool b -> BoolV b
         | Var x -> Mem.find (Env.find x env) (mem)
-        | Ref ref -> AddressV (Env.find ref env)
-        | Deref deref ->
+        | Ref x -> AddressV (Env.find x env) (* &x : x의 주소값 *)
+        | Deref x ->  (* *x : x 주소값의 value  *)
                         begin
-                                match Mem.find(Env.find deref env)(mem) with
+                                match Mem.find(Env.find x env)(mem) with
                                 | AddressV addr -> Mem.find (addr) mem
-                                | _ -> failwith (F.asprintf "Not a memory address: %s" deref)
+                                | _ -> failwith (F.asprintf "Not a memory address: %s" x)
                         end
         | Add (e1, e2) ->
                         begin
@@ -74,28 +74,28 @@ let rec interp_s (stmt : Ast.stmt) ((env, mem) : Env.t * Mem.t) : Env.t * Mem.t 
                 | [] -> (env, mem)
         in
         match stmt with
-        | VarDeclStmt x -> 
+        | VarDeclStmt x -> (* var x *) 
                         begin
-                                match Env.mem x env with
+                                match Env.mem(x)(env) with
                                 | false -> ((Env.insert (x) (Env.new_address()) env), mem) 
                                 | true -> failwith (F.asprintf "%s is already declared." x)
                         end
-        | StoreStmt (e1, e2) ->
+        | StoreStmt (e1, e2) -> (* *e1 = e2 *)
                         begin
                                 match interp_e(e1)(env, mem) with
                                 | AddressV addr -> (env, (Mem.insert (addr) (interp_e(e2)(env, mem)) (mem)))
                                 | _ -> failwith (F.asprintf "Not a memory addresss: %a" Ast.pp_e e1)
                         end
-        | IfStmt (expr, stmt_lst, stmt_lstOpt) -> 
+        | IfStmt (expr, true_stmts, false_stmtsOpt) -> 
                         begin
                                 match interp_e(expr)(env,mem) with
                                 | BoolV b -> 
-                                                if b = true then impl_s stmt_lst (env, mem)
+                                                if b = true then impl_s true_stmts (env, mem)
                                                 else 
                                                         begin 
-                                                                match stmt_lstOpt with
+                                                                match false_stmtsOpt with
                                                                 | None -> (env, mem)
-                                                                | Some lst -> impl_s lst (env, mem)
+                                                                | Some stmts -> impl_s stmts (env, mem)
                                                         end
                                 | _ -> failwith (F.asprintf "Not a boolean : %a" Ast.pp_e expr)
                         end
