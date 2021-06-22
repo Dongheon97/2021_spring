@@ -47,8 +47,8 @@ def get_threshold(src, type='rice'):
     k_opt_warb = []
     for k in range(256):
         # 각각 한 줄로 작성하세요
-        q1 = np.sum(p[:k])
-        q2 = np.sum(p[k:])
+        q1 = np.sum(p[:k+1])
+        q2 = np.sum(p[k+1:])
 
         # 굳이 할 필요 없는 경우
         if q1 == 0 or q2 == 0:
@@ -57,15 +57,15 @@ def get_threshold(src, type='rice'):
             continue
 
         # 각각 한 줄로 작성하세요 (m1, m2, mg, var1, var2)
-        m1 = np.sum(intensity[:k] * p[:k]) / q1
-        m2 = np.sum(intensity[k:] * p[k:]) / q2
+        m1 = np.sum(intensity[:k+1] * p[:k+1]) / q1
+        m2 = np.sum(intensity[k+1:] * p[k+1:]) / q2
 
         mg = q1*m1 + q2*m2
 
         #var1 = np.sum( np.square(intensity[:k]) * p[:k] - np.square(m1)) / q1
         #var2 = np.sum( np.square(intensity[k:]) * p[k:] - np.square(m2)) / q2
-        var1 = np.sum(((intensity[:k] - m1)**2) * p[:k]) / q1
-        var2 = np.sum(((intensity[k:] - m2)**2) * p[k:]) / q2
+        var1 = np.sum(((intensity[:k+1] - m1)**2) * p[:k+1]) / q1
+        var2 = np.sum(((intensity[k+1:] - m2)**2) * p[k+1:]) / q2
 
         # varg = np.sum(np.square(intensity - mg)*p)
 
@@ -105,7 +105,7 @@ def rice_main():
     cv2.waitKey()
     cv2.destroyAllWindows()
 
-'''
+
 def meat_main():
     meat = cv2.imread('meat.png', cv2.IMREAD_GRAYSCALE)
     mask = cv2.imread('mask.TIFF', cv2.IMREAD_GRAYSCALE)
@@ -118,17 +118,18 @@ def meat_main():
 
     dst, val = get_threshold(meat, 'meat')
     #tip : 4칙연산(그냥 사칙연산 혹은 cv2.사칙연산 잘 사용하기)
-    final = ???
+    final = dst
 
     cv2.imshow('dst', dst)
     cv2.imshow('final', final)
 
     cv2.waitKey()
     cv2.destroyAllWindows()
-'''
+
 
 def main():
-    rice_main()
+    arr = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8])
+    #rice_main()
     #meat_main()
 
 

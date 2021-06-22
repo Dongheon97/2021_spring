@@ -40,14 +40,23 @@ def get_threshold(src, type='rice'):
 
     else:
         # 여러줄로 작성하셔도 상관 없습니다.
-        p = ???
+        p = hist / (h * w)
+        '''
+        count = 0
+        for row in range(h):
+            for col in range(w):
+                if src[row][col] != 0:
+                    count+=1
+        p = hist / count
+        '''
+        p = hist/(h*w)
 
     k_opt_warw = []
     k_opt_warb = []
     for k in range(256):
         # 각각 한 줄로 작성하세요
-        q1 = np.sum(p[:k])
-        q2 = np.sum(p[k:])
+        q1 = np.sum(p[:k+1])
+        q2 = np.sum(p[k+1:])
 
         # 굳이 할 필요 없는 경우
         if q1 == 0 or q2 == 0:
@@ -56,15 +65,15 @@ def get_threshold(src, type='rice'):
             continue
 
         # 각각 한 줄로 작성하세요 (m1, m2, mg, var1, var2)
-        m1 = np.sum(intensity[:k] * p[:k]) / q1
-        m2 = np.sum(intensity[k:] * p[k:]) / q2
+        m1 = np.sum(intensity[:k+1] * p[:k+1]) / q1
+        m2 = np.sum(intensity[k+1:] * p[k+1:]) / q2
 
         mg = q1*m1 + q2*m2
 
         #var1 = np.sum( np.square(intensity[:k]) * p[:k] - np.square(m1)) / q1
         #var2 = np.sum( np.square(intensity[k:]) * p[k:] - np.square(m2)) / q2
-        var1 = np.sum(((intensity[:k] - m1)**2) * p[:k]) / q1
-        var2 = np.sum(((intensity[k:] - m2)**2) * p[k:]) / q2
+        var1 = np.sum(((intensity[:k+1] - m1)**2) * p[:k+1]) / q1
+        var2 = np.sum(((intensity[k+1:] - m2)**2) * p[k+1:]) / q2
 
         # varg = np.sum(np.square(intensity - mg)*p)
 
@@ -114,11 +123,22 @@ def meat_main():
     # 이 부분은 결과가 잘 나오도록 각자 알아서 구현해보세요       #
     #####################################################
 
+    img_mask = mask / 255                       # 0 or 1
+    dst, val = get_threshold(meat, 'meat')      # thresholding
 
-
-    dst, val = get_threshold(src, 'meat')
     #tip : 4칙연산(그냥 사칙연산 혹은 cv2.사칙연산 잘 사용하기)
-    final = ???
+
+    # dst 만들기
+    dst = img_mask * dst
+    dst = 255 - dst                             # 이미지 반전 for multiply
+    dst = img_mask * dst                        # 반전한 이미지에 img_mask 한번 더 곱하기
+
+    # final
+    dst_mask = 255 - dst                        # 이미지 반전 for multiply
+    dst_mask = dst_mask / 255                   # 0 or 1
+
+    final = dst_mask * meat                     # dst_mask로 해당 부분 걸러낸다.
+    final = (final + dst).astype(np.uint8)      # 걸러낸 부분과 dst를 더해서 final 완성
 
     cv2.imshow('dst', dst)
     cv2.imshow('final', final)
@@ -129,7 +149,7 @@ def meat_main():
 
 def main():
     rice_main()
-    #meat_main()
+    meat_main()
 
 
 if __name__ == '__main__':

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#echo $PATH
+
+#PATH=$(echo $PATH | awk -v RS=: -v ORS=: '!($0 in a) {a[$0]; print}')
+
+
+path=$(echo $PATH | tr ":" "\n")
+
+echo "$path" > path.txt
+
+filtered=$(sort path.txt | uniq)
+echo $filtered
+
+new=$(echo $filtered | tr " " ":")
+echo $new 
+
+
+PATH=$new
+
+export PATH=$PATH
+	

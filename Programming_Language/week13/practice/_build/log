@@ -1,10 +1,11 @@
 # dune build main.exe
 # OCAMLPARAM: unset
-# Workspace root: /home/dongheon_97/pl01/week13/practice
-$ /usr/bin/nproc > /tmp/dune301381.output 2> /dev/null
+# Workspace root:
+# /Users/idongheon/dongheon/2021_spring/Programming_Language/week13/practice
+$ /usr/bin/getconf _NPROCESSORS_ONLN > /var/folders/nf/xgy83hd109v7bsmqbpjqn_nm0000gn/T/dune0194af.output 2> /dev/null
 # Auto-detected concurrency: 4
 # disable binary cache
-$ /usr/bin/ocamlc.opt -config > /tmp/dune17bd6c.output
+$ /usr/local/bin/ocamlc.opt -config > /var/folders/nf/xgy83hd109v7bsmqbpjqn_nm0000gn/T/dune1e19f8.output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -14,85 +15,72 @@ $ /usr/bin/ocamlc.opt -config > /tmp/dune17bd6c.output
 #  ; fdo_target_exe = None
 #  ; build_dir = "default"
 #  ; toplevel_path =
-#      Some External "/home/dongheon_97/.opam/default/lib/toplevel"
-#  ; ocaml_bin = External "/usr/bin"
-#  ; ocaml = Ok External "/home/dongheon_97/.opam/default/bin/ocaml"
-#  ; ocamlc = External "/usr/bin/ocamlc.opt"
-#  ; ocamlopt = Ok External "/usr/bin/ocamlopt.opt"
-#  ; ocamldep = Ok External "/usr/bin/ocamldep.opt"
-#  ; ocamlmklib = Ok External "/usr/bin/ocamlmklib.opt"
+#      Some External "/Users/idongheon/.opam/default/lib/toplevel"
+#  ; ocaml_bin = External "/usr/local/bin"
+#  ; ocaml = Ok External "/usr/local/bin/ocaml"
+#  ; ocamlc = External "/usr/local/bin/ocamlc.opt"
+#  ; ocamlopt = Ok External "/usr/local/bin/ocamlopt.opt"
+#  ; ocamldep = Ok External "/usr/local/bin/ocamldep.opt"
+#  ; ocamlmklib = Ok External "/usr/local/bin/ocamlmklib.opt"
 #  ; env =
 #      map
-#        { "DUNE_OCAML_HARDCODED" : "/home/dongheon_97/.opam/default/lib"
-#        ; "DUNE_OCAML_STDLIB" : "/usr/lib/ocaml"
-#        ; "DUNE_SOURCEROOT" : "/home/dongheon_97/pl01/week13/practice"
+#        { "DUNE_OCAML_HARDCODED" : "/Users/idongheon/.opam/default/lib"
+#        ; "DUNE_OCAML_STDLIB" : "/usr/local/lib/ocaml"
+#        ; "DUNE_SOURCEROOT" :
+#            "/Users/idongheon/dongheon/2021_spring/Programming_Language/week13/practice"
 #        ; "INSIDE_DUNE" :
-#            "/home/dongheon_97/pl01/week13/practice/_build/default"
+#            "/Users/idongheon/dongheon/2021_spring/Programming_Language/week13/practice/_build/default"
+#        ; "MANPATH" :
+#            "/Users/idongheon/dongheon/2021_spring/Programming_Language/week13/practice/_build/install/default/bin"
 #        ; "OCAMLFIND_IGNORE_DUPS_IN" :
-#            "/home/dongheon_97/pl01/week13/practice/_build/install/default/lib"
+#            "/Users/idongheon/dongheon/2021_spring/Programming_Language/week13/practice/_build/install/default/lib"
 #        ; "OCAMLPATH" :
-#            "/home/dongheon_97/pl01/week13/practice/_build/install/default/lib"
+#            "/Users/idongheon/dongheon/2021_spring/Programming_Language/week13/practice/_build/install/default/lib"
 #        ; "OCAMLTOP_INCLUDE_PATH" :
-#            "/home/dongheon_97/pl01/week13/practice/_build/install/default/lib/toplevel"
+#            "/Users/idongheon/dongheon/2021_spring/Programming_Language/week13/practice/_build/install/default/lib/toplevel"
 #        ; "OCAML_COLOR" : "always"
 #        ; "OPAMCOLOR" : "always"
 #        }
-#  ; findlib_path = [ External "/home/dongheon_97/.opam/default/lib" ]
+#  ; findlib_path = [ External "/Users/idongheon/.opam/default/lib" ]
 #  ; arch_sixtyfour = true
 #  ; natdynlink_supported = true
 #  ; supports_shared_libraries = true
 #  ; ocaml_config =
-#      { version = "4.05.0"
-#      ; standard_library_default = "/usr/lib/ocaml"
-#      ; standard_library = "/usr/lib/ocaml"
-#      ; standard_runtime = "/usr/bin/ocamlrun"
+#      { version = "4.12.0"
+#      ; standard_library_default = "/usr/local/lib/ocaml"
+#      ; standard_library = "/usr/local/lib/ocaml"
+#      ; standard_runtime = "the_standard_runtime_variable_was_deleted"
 #      ; ccomp_type = "cc"
-#      ; c_compiler = "gcc"
-#      ; ocamlc_cflags =
-#          [ "-O2"
-#          ; "-fno-strict-aliasing"
-#          ; "-fwrapv"
-#          ; "-D_FILE_OFFSET_BITS=64"
-#          ; "-D_REENTRANT"
-#          ; "-fPIC"
-#          ]
-#      ; ocamlc_cppflags = []
-#      ; ocamlopt_cflags =
-#          [ "-O2"
-#          ; "-fno-strict-aliasing"
-#          ; "-fwrapv"
-#          ; "-fPIC"
-#          ; "-D_FILE_OFFSET_BITS=64"
-#          ; "-D_REENTRANT"
-#          ]
-#      ; ocamlopt_cppflags = []
+#      ; c_compiler = "clang"
+#      ; ocamlc_cflags = [ "-O2"; "-fno-strict-aliasing"; "-fwrapv" ]
+#      ; ocamlc_cppflags = [ "-D_FILE_OFFSET_BITS=64"; "-D_REENTRANT" ]
+#      ; ocamlopt_cflags = [ "-O2"; "-fno-strict-aliasing"; "-fwrapv" ]
+#      ; ocamlopt_cppflags = [ "-D_FILE_OFFSET_BITS=64"; "-D_REENTRANT" ]
 #      ; bytecomp_c_compiler =
-#          [ "gcc"
+#          [ "clang"
 #          ; "-O2"
 #          ; "-fno-strict-aliasing"
 #          ; "-fwrapv"
 #          ; "-D_FILE_OFFSET_BITS=64"
 #          ; "-D_REENTRANT"
-#          ; "-fPIC"
 #          ]
-#      ; bytecomp_c_libraries = [ "-lm"; "-ldl"; "-lcurses"; "-lpthread" ]
+#      ; bytecomp_c_libraries = [ "-lm"; "-lpthread" ]
 #      ; native_c_compiler =
-#          [ "gcc"
+#          [ "clang"
 #          ; "-O2"
 #          ; "-fno-strict-aliasing"
 #          ; "-fwrapv"
-#          ; "-fPIC"
 #          ; "-D_FILE_OFFSET_BITS=64"
 #          ; "-D_REENTRANT"
 #          ]
-#      ; native_c_libraries = [ "-lm"; "-ldl" ]
-#      ; cc_profile = [ "-pg" ]
+#      ; native_c_libraries = [ "-lm" ]
+#      ; cc_profile = []
 #      ; architecture = "amd64"
 #      ; model = "default"
 #      ; int_size = 63
 #      ; word_size = 64
-#      ; system = "linux"
-#      ; asm = [ "as" ]
+#      ; system = "macosx"
+#      ; asm = [ "clang"; "-arch"; "x86_64"; "-Wno-trigraphs"; "-c" ]
 #      ; asm_cfi_supported = true
 #      ; with_frame_pointers = false
 #      ; ext_exe = ""
@@ -103,24 +91,47 @@ $ /usr/bin/ocamlc.opt -config > /tmp/dune17bd6c.output
 #      ; os_type = "Unix"
 #      ; default_executable_name = "a.out"
 #      ; systhread_supported = true
-#      ; host = "x86_64-pc-linux-gnu"
-#      ; target = "x86_64-pc-linux-gnu"
-#      ; profiling = true
+#      ; host = "x86_64-apple-darwin19.6.0"
+#      ; target = "x86_64-apple-darwin19.6.0"
+#      ; profiling = false
 #      ; flambda = false
 #      ; spacetime = false
-#      ; safe_string = false
-#      ; exec_magic_number = "Caml1999X011"
-#      ; cmi_magic_number = "Caml1999I021"
-#      ; cmo_magic_number = "Caml1999O011"
-#      ; cma_magic_number = "Caml1999A012"
-#      ; cmx_magic_number = "Caml1999Y015"
-#      ; cmxa_magic_number = "Caml1999Z014"
-#      ; ast_impl_magic_number = "Caml1999M020"
-#      ; ast_intf_magic_number = "Caml1999N018"
-#      ; cmxs_magic_number = "Caml2007D002"
-#      ; cmt_magic_number = "Caml2012T009"
+#      ; safe_string = true
+#      ; exec_magic_number = "Caml1999X029"
+#      ; cmi_magic_number = "Caml1999I029"
+#      ; cmo_magic_number = "Caml1999O029"
+#      ; cma_magic_number = "Caml1999A029"
+#      ; cmx_magic_number = "Caml1999Y029"
+#      ; cmxa_magic_number = "Caml1999Z029"
+#      ; ast_impl_magic_number = "Caml1999M029"
+#      ; ast_intf_magic_number = "Caml1999N029"
+#      ; cmxs_magic_number = "Caml1999D029"
+#      ; cmt_magic_number = "Caml1999T029"
 #      ; natdynlink_supported = true
 #      ; supports_shared_libraries = true
 #      ; windows_unicode = false
 #      }
 #  }
+$ (cd _build/default && /Users/idongheon/.opam/default/bin/menhir parser/parser.mly --base parser/parser --infer-write-query parser/parser__mock.ml.mock)
+$ (cd _build/default && /usr/local/bin/ocamldep.opt -modules -impl parser/parser__mock.ml.mock) > _build/default/.main.eobjs/parser__mock.ml.mock.d
+$ (cd _build/default && /usr/local/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -49 -nopervasives -nostdlib -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/dune__exe.cmo -c -impl .main.eobjs/dune__exe.ml-gen)
+$ (cd _build/default && /usr/local/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/byte/dune__exe__Ast.cmo -c -impl ast.ml)
+$ (cd _build/default && /usr/local/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I .main.eobjs/byte -open Dune__exe -short-paths -i -impl parser/parser__mock.ml.mock) > _build/default/parser/parser__mock.mli.inferred
+$ (cd _build/default && /Users/idongheon/.opam/default/bin/menhir parser/parser.mly --base parser/parser --infer-read-reply parser/parser__mock.mli.inferred)
+$ (cd _build/default && /usr/local/bin/ocamldep.opt -modules -intf parser/parser.mli) > _build/default/.main.eobjs/parser.mli.d
+$ (cd _build/default && /usr/local/bin/ocamldep.opt -modules -impl parser/parser.ml) > _build/default/.main.eobjs/parser.ml.d
+$ (cd _build/default && /usr/local/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/byte/dune__exe__Store.cmo -c -impl store.ml)
+$ (cd _build/default && /usr/local/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/byte/dune__exe__Parser.cmi -c -intf parser/parser.mli)
+$ (cd _build/default && /usr/local/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -49 -nopervasives -nostdlib -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml-gen -no-alias-deps -opaque -o .main.eobjs/native/dune__exe.cmx -c -impl .main.eobjs/dune__exe.ml-gen)
+$ (cd _build/default && /usr/local/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/byte/dune__exe__Interpreter.cmo -c -impl interpreter.ml)
+$ (cd _build/default && /usr/local/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/byte/dune__exe__Lexer.cmo -c -impl parser/lexer.ml)
+$ (cd _build/default && /usr/local/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/native/dune__exe__Ast.cmx -c -impl ast.ml)
+$ (cd _build/default && /usr/local/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/native/dune__exe__Store.cmx -c -impl store.ml)
+$ (cd _build/default && /usr/local/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/byte/dune__exe__ParserMain.cmo -c -impl parser/parserMain.ml)
+$ (cd _build/default && /usr/local/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/byte/dune__exe__Main.cmo -c -impl main.ml)
+$ (cd _build/default && /usr/local/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/native/dune__exe__Lexer.cmx -c -impl parser/lexer.ml)
+$ (cd _build/default && /usr/local/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/native/dune__exe__Interpreter.cmx -c -impl interpreter.ml)
+$ (cd _build/default && /usr/local/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/native/dune__exe__Parser.cmx -c -impl parser/parser.ml)
+$ (cd _build/default && /usr/local/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/native/dune__exe__ParserMain.cmx -c -impl parser/parserMain.ml)
+$ (cd _build/default && /usr/local/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/native/dune__exe__Main.cmx -c -impl main.ml)
+$ (cd _build/default && /usr/local/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o main.exe .main.eobjs/native/dune__exe.cmx .main.eobjs/native/dune__exe__Ast.cmx .main.eobjs/native/dune__exe__Store.cmx .main.eobjs/native/dune__exe__Interpreter.cmx .main.eobjs/native/dune__exe__Parser.cmx .main.eobjs/native/dune__exe__Lexer.cmx .main.eobjs/native/dune__exe__ParserMain.cmx .main.eobjs/native/dune__exe__Main.cmx)
