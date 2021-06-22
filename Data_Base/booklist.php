@@ -1,11 +1,21 @@
 <?php
-$tns = "
+putenv("NLS_LANG=KOREAN_KOREA.UTF8");
+$dns = "
+    (DESCRIPTION=
+        (ADDRESS_LIST= (ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521)))
+        (CONNECT_DATA= (SERVICE_NAME=XE))
+    )
+";
+$conn = oci_connect('c##madang', "madang", $dns);
+    
+/*$tns = "
     (DESCRIPTION=
         (ADDRESS_LIST= (ADDRESS=(PROTOCOL=TCP)(HOST=cnusdlab.synology.me)(PORT=1521)))
         (CONNECT_DATA= (SERVICE_NAME=XE))
     )
 ";
 $dsn = "oci:dbname=".$tns.";charset=utf8";
+$dsn = "mysql:host=localhost;port=1521;dbname=".$tns.";charset=utf8";
 $username = 'c##madang';
 $password = 'madang';
 $searchWord = $_GET['searchWord'] ?? '';
@@ -14,6 +24,7 @@ try {
 } catch (PDOException $e) {
     echo("에러 내용: ".$e -> getMessage());
 }
+*/
 ?>
 <!DOCTYPE html>
 <html lang="ko">
