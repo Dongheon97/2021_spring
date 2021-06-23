@@ -1,7 +1,7 @@
 <?php
 $tns = "
     (DESCRIPTION = 
-        (ADDRESS_LIST= (ADDRESS=(PROTOCOL=TCP)(HOST=cnusdlab.synology.me)(PORT=1521)))
+        (ADDRESS_LIST= (ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521)))
         (CONNECT_DATA= (SERVICE_NAME=XE))
     )
 ";
@@ -14,13 +14,19 @@ try{
 } catch (PDOException $e){
     echo ("에러 내용: ".$e -> getMessage());
 }
-$stmt = $conn -> prepare("SELECT TITLE, PUBLISHER FROM EBOOK WHERE ISBN = ?");
+$stmt = $conn -> prepare("SELECT E.ISBN, E.TITLE, A.AUTHOR, TO_CHAR(E.YEAR, 'YYYY.MM.DD') AS YYDDMM, E.PUBLISHER, NVL(TO_CHAR(E.DATEDUE, 'YYYY.MM.DD'), 'X') AS RESERVATION FROM EBOOK E, AUTHORS A WHERE E.ISBN = A.ISBN AND E.ISBN = ?");
 $stmt -> execute(array($ISBN));
 $title = '';
+$author = '';
 $publisher = '';
+$year = '';
+$reservation= '';
 if ($row = $stmt -> fetch (PDO::FETCH_ASSOC)){
     $title = $row['TITLE'];    
+    $author = $row['AUTHOR'];
     $publisher = $row['PUBLISHER'];
+    $year = $row['YYDDMM'];
+    $reservation = $row['RESERVATION'];
 ?>
 <!DOCTYPE html>
 <html>
@@ -34,7 +40,7 @@ if ($row = $stmt -> fetch (PDO::FETCH_ASSOC)){
             text-decoration: none;
         }
     </style>
-    <title>Book VIEW</title>
+    <title>BOOK_VIEW</title>
 </head>
 <body>
 <div class="container">
@@ -42,12 +48,28 @@ if ($row = $stmt -> fetch (PDO::FETCH_ASSOC)){
     <table class="table table-bordered text-center">
         <tbody>
             <tr>
+                <td>ISBN</td>
+                <td><?= $ISBN ?></td>
+            </tr>
+            <tr>
                 <td>제목</td>
                 <td><?= $title ?></td>
             </tr>
             <tr>
+                <td>작가</td>
+                <td><?= $author ?></td>
+            </tr>
+            <tr>
                 <td>출판사</td>
                 <td><?= $publisher ?></td>
+            </tr>
+            <tr>
+                <td>출판연도</td>
+                <td><?= $year ?></td>
+            </tr>
+            <tr>
+                <td>반납예상일</td>
+                <td><?= $reservation ?></td>
             </tr>
         </tbody>
     </table>
@@ -66,13 +88,13 @@ if ($row = $stmt -> fetch (PDO::FETCH_ASSOC)){
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="deleteConfirmModalLabel"><?= $title ?></h5>
-                <button type="button" class="btn close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                위의 책을 삭제하시겠습니까
+                위의 책을 삭제하시겠습니까?
             </div>
             <div class="modal-footer">
-                <form action="process.php?mode delete" method="post" class="row">
+                <form action="process.php?mode=delete" method="POST" class="row">
                     <input type="hidden" name="ISBN" value="<?= $ISBN ?>">
                     <button type="submit" class="btn btn-danger">삭제</button>
                 </form>
@@ -82,5 +104,5 @@ if ($row = $stmt -> fetch (PDO::FETCH_ASSOC)){
     </div>
 </div>
 </body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384 gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
 </html>
