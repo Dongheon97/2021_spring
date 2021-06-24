@@ -10,49 +10,72 @@ $username = 'c##madang';
 $password = 'madang';
 $dbh = new PDO($dsn, $username, $password);
 
+$for_commit = $dbh -> prepare('commit');
+
 switch ($_GET['mode']){
     case 'insert':
+        // insert ebook info
         $stmt = $dbh -> prepare("INSERT INTO EBOOK (ISBN, TITLE, YEAR, PUBLISHER) VALUES ((SELECT NVL(MAX(ISBN), 0) + 1 FROM EBOOK), :title, :year, :publisher)");
-        //$stmt2 = $dbh -> prepate("INSERT INTO AUTHORS (ISBN, author) values ( (select max(ISBN) from ebook), ':authors')")
         $stmt -> bindParam(':title', $title);
         $stmt -> bindParam(':year', $year);
         $stmt -> bindParam(':publisher', $publisher);
-        //$stmt -> bindParam(':author', $author);
         $title = $_POST['title'];
         $year = $_POST['year'];
         $publisher = $_POST['publisher'];
-        //$author = $_POST['author']
         $stmt -> execute();
+        // insert author info
+        $stmt = $dbh -> prepare("INSERT INTO AUTHORS (ISBN, author) values ((select max(ISBN) from ebook), :author)");
+        $stmt -> bindParam(':author', $author);
+        $author = $_POST['author'];
+        $stmt -> execute();
+        // commit;
+        $for_commit -> execute();
         header("Location: booklist.php");
         break;
+
     case 'delete':
-        $stmt = $dbh -> prepare("SELECT COUNT(ISBN) FROM previous_Rental WHERE ISBN = :ISBN");
-        $stmt -> bindParam(':ISBN', $ISBN);
-        $stmt -> execute();
-        if($stmt > 0) {
-            $stmt = $dbh -> prepare("DELETE FROM previous_Rental WHERE ISBN = :ISBN");
-            $stmt -> bindParam(':ISBN', $ISBN);
-            $stmt -> execute();
-        }
-        $stmt = $dbh -> prepare("DELETE FROM EBOOK WHERE ISBN = :ISBN");
+        // delete from previous_rental
+        $stmt = $dbh -> prepare('DELETE FROM PREVIOUS_RENTAL WHERE ISBN = :ISBN');
         $stmt -> bindParam(':ISBN', $ISBN);
         $ISBN = $_POST['ISBN'];
         $stmt -> execute();
+        // delete from author
+        $stmt = $dbh -> prepare('DELETE FROM AUTHORS WHERE ISBN = :ISBN');
+        $stmt -> bindParam(':ISBN', $ISBN);
+        $ISBN = $_POST['ISBN'];
+        $stmt -> execute();
+        // delete from ebook
+        $stmt = $dbh -> prepare('DELETE FROM EBOOK WHERE ISBN = :ISBN');
+        $stmt -> bindParam(':ISBN', $ISBN);
+        $ISBN = $_POST['ISBN'];
+        $stmt -> execute();
+        // commit;
+        $for_commit -> execute();
         header("Location: booklist.php");
+        
         break;
+
     case 'modify':
-        $stmt = $dbh -> prepare('UPDATE EBOOK SET TITLE = :title , YEAR = :year, PUBLISHER = :publisher WHERE ISBN = :ISBN');
+        // modify ebook info
+        $stmt = $dbh -> prepare('UPDATE EBOOK SET TITLE = :title, YEAR = :year, PUBLISHER = :publisher WHERE ISBN = :ISBN');
         $stmt -> bindParam(':title', $title);
         $stmt -> bindParam(':year', $year);
         $stmt -> bindParam(':publisher', $publisher);
-        //$stmt -> bindParam('author', $price);
         $stmt -> bindParam(':ISBN', $ISBN);
         $title = $_POST['title'];
         $year = $_POST['year'];
         $publisher = $_POST['publisher'];
-        //$price = $_POST price
         $ISBN = $_POST['ISBN'];
         $stmt -> execute();
+        // modify author info
+        $stmt = $dbh -> prepare('UPDATE AUTHORS SET AUTHOR = :author WHERE ISBN = :ISBN');
+        $stmt -> bindParam(':author', $author);
+        $stmt -> bindParam(':ISBN', $ISBN);
+        $author = $_POST['author'];
+        $ISBN = $_POST['ISBN'];
+        $stmt -> execute();
+        // commit;
+        $for_commit -> execute();
         header("Location: bookview.php?ISBN=$ISBN");
         break;
 }

@@ -3,6 +3,9 @@ $ISBN = $_GET['ISBN'] ?? '';
 $mode = $_GET['mode'] ?? '';
 $title = '';
 $year = '';
+
+$author = '';
+
 $publisher = '';
 if ($mode == 'modify'){
     $tns = "
@@ -19,10 +22,11 @@ if ($mode == 'modify'){
     }catch (PDOException $e){
         echo ("에러 내용: ".$e -> getMessage());
     }
-    $stmt = $conn -> prepare("SELECT TITLE, YEAR, PUBLISHER FROM EBOOK WHERE ISBN= :ISBN ");
+    $stmt = $conn -> prepare("SELECT E.TITLE, A.AUTHOR, E.YEAR, E.PUBLISHER FROM EBOOK E, AUTHORS A WHERE A.ISBN = E.ISBN AND E.ISBN= :ISBN ");
     $stmt->execute(array($ISBN));
     if ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
         $title = $row ['TITLE'];
+        $author = $row ['AUTHOR'];
         $year = $row ['YEAR'];
         $publisher = $row['PUBLISHER'];
     }
@@ -52,9 +56,14 @@ if ($mode == 'modify'){
             <div class="invalid-tooltip">제목을 입력하세요</div>
         </div>
         <div class="form-floating mb-3">
+            <input type="text" class="form-control" maxlength="50" id="author" name="author" placeholder="작가" value ="<?= $author ?>" required>
+            <label for="author" class="form-label">작가</label>
+            <div class="invalid-tooltip">작가를 입력하세요</div>
+        </div>
+        <div class="form-floating mb-3">
             <input type="text" class="form-control" maxlength="10" id="year" name="year" placeholder="출판연도" value ="<?= $year ?>" required>
-            <label for="year" class="form-label">출판연도(YYYY-MM-DD)</label>
-            <div class="invalid-tooltip">출판연도를 입력하세요</div>
+            <label for="year" class="form-label">출판 연도 (YY/MM/DD)</label>
+            <div class="invalid-tooltip">출판 연도를 입력하세요</div>
         </div>
         <div class="form-floating mb-3">
             <input type="text" class="form-control" maxlength="50" id="publisher" name="publisher" placeholder="출판사" value ="<?= $publisher ?>" required>

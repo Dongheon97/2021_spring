@@ -64,11 +64,11 @@ if ($row = $stmt -> fetch (PDO::FETCH_ASSOC)){
                 <td><?= $publisher ?></td>
             </tr>
             <tr>
-                <td>출판연도</td>
+                <td>출판 연도</td>
                 <td><?= $year ?></td>
             </tr>
             <tr>
-                <td>반납예상일</td>
+                <td>반납 예상일</td>
                 <td><?= $reservation ?></td>
             </tr>
         </tbody>

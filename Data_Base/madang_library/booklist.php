@@ -58,8 +58,8 @@ try{
         <tbody>
 <?php
 $stmt = $conn -> 
-    // prepare("SELECT E.ISBN, E.TITLE, E.PUBLISHER, A.AUTHOR, NVL2(E.DATEDUE, 'O', 'X') AS BORROW FROM EBOOK E, AUTHORS A WHERE A.ISBN = E.ISBN AND LOWER(TITLE) LIKE '%' || :searchWord || '%' ORDER BY ISBN");
-    prepare("SELECT E.ISBN, E.TITLE, E.PUBLISHER, A.AUTHOR, NVL2(E.DATEDUE, 'O', 'X') AS BORROW FROM EBOOK E, AUTHORS A WHERE A.isbn = E.isbn AND LOWER(TITLE) LIKE '%' || :searchWord || '%' ORDER BY ISBN");
+    //prepare("SELECT E.ISBN, E.TITLE, E.PUBLISHER, NVL2(E.DATEDUE, 'O', 'X') AS BORROW FROM EBOOK E WHERE LOWER(TITLE) LIKE '%' || :searchWord || '%' ORDER BY ISBN");
+    prepare("SELECT E.ISBN, E.TITLE, E.PUBLISHER, A.AUTHOR, NVL2(E.DATEDUE, 'O', 'X') AS ISBORROWING FROM EBOOK E, AUTHORS A WHERE A.isbn = E.isbn AND LOWER(TITLE) LIKE '%' || :searchWord || '%' ORDER BY ISBN");
 $stmt -> execute(array($searchWord));
 while ($row = $stmt -> fetch(PDO::FETCH_ASSOC)) {
 ?>
@@ -68,7 +68,7 @@ while ($row = $stmt -> fetch(PDO::FETCH_ASSOC)) {
             <td><?= $row['TITLE'] ?></a></td>
             <td><?= $row['AUTHOR'] ?></td>
             <td><?= $row['PUBLISHER'] ?></td>
-            <td><?= $row['BORROW'] ?></td>
+            <td><?= $row['ISBORROWING'] ?></td>
         </tr>
 <?php
 }
