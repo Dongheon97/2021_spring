@@ -3,10 +3,9 @@ $ISBN = $_GET['ISBN'] ?? '';
 $mode = $_GET['mode'] ?? '';
 $title = '';
 $year = '';
-
 $author = '';
-
 $publisher = '';
+
 if ($mode == 'modify'){
     $tns = "
         (DESCRIPTION=
@@ -70,7 +69,7 @@ if ($mode == 'modify'){
             <label for="publisher" class="form-label">출판사</label>
             <div class="invalid-tooltip">출판사를 입력하세요</div>
         </div>
-    <!-- 등록 버튼 -->
+        <!-- 등록 버튼 -->
         <div class="mb-3">
             <input type="hidden" name="ISBN" value ="<?= $ISBN ?>">
             <button class="btn btn-primary" type="submit"><?= $mode == 'insert' ? '등록' : '수정'?></button>

@@ -24,7 +24,7 @@ switch ($_GET['mode']){
         $publisher = $_POST['publisher'];
         $stmt -> execute();
         // insert author info
-        $stmt = $dbh -> prepare("INSERT INTO AUTHORS (ISBN, author) values ((select max(ISBN) from ebook), :author)");
+        $stmt = $dbh -> prepare("INSERT INTO AUTHORS (ISBN, author) VALUES ((SELECT MAX(ISBN) FROM EBOOK), :author)");
         $stmt -> bindParam(':author', $author);
         $author = $_POST['author'];
         $stmt -> execute();
@@ -52,7 +52,6 @@ switch ($_GET['mode']){
         // commit;
         $for_commit -> execute();
         header("Location: booklist.php");
-        
         break;
 
     case 'modify':
