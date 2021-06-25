@@ -27,11 +27,11 @@ try{
             text-decoration: none;  
         }
     </style>
-    <title>BOOK_LIST</title>
+    <title>STATISTIC</title>
 </head>
 <body>
 <div class="container">
-    <h2 class="text-center">책 리스트</h2>
+    <h2 class="text-center">책 검색</h2>
     </tbody>
     </table>
     <form class="row">
@@ -58,7 +58,7 @@ try{
         <tbody>
 <?php
 $stmt = $conn -> 
-    //prepare("SELECT E.ISBN, E.TITLE, E.PUBLISHER, NVL2(E.DATEDUE, 'O', 'X') AS BORROW FROM EBOOK E WHERE LOWER(TITLE) LIKE '%' || :searchWord || '%' ORDER BY ISBN");
+    
     prepare("SELECT E.ISBN, E.TITLE, E.PUBLISHER, A.AUTHOR, NVL2(E.DATEDUE, 'O', 'X') AS ISBORROWING FROM EBOOK E, AUTHORS A WHERE A.isbn = E.isbn AND LOWER(TITLE) LIKE '%' || :searchWord || '%' ORDER BY ISBN");
 $stmt -> execute(array($searchWord));
 while ($row = $stmt -> fetch(PDO::FETCH_ASSOC)) {
@@ -75,8 +75,5 @@ while ($row = $stmt -> fetch(PDO::FETCH_ASSOC)) {
 ?>
 <div class="d-grid d-md-flex justify-content-md-end">
         <a href="input.php?mode=insert" class="btn btn-primary">등록</a>
-</div>
-<div class="d-grid d-md-flex justify-content-md-end">
-        <a href="administor_main.php" class="btn btn-primary">뒤로가기</a>
 </div>
 </html>

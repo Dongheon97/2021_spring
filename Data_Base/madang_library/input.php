@@ -20,7 +20,7 @@ if ($mode == 'modify'){
         $conn = new PDO($url, $username, $password);
     }catch (PDOException $e){
         echo ("에러 내용: ".$e -> getMessage());
-    }
+    }              
     $stmt = $conn -> prepare("SELECT E.TITLE, A.AUTHOR, E.YEAR, E.PUBLISHER FROM EBOOK E, AUTHORS A WHERE A.ISBN = E.ISBN AND E.ISBN= :ISBN ");
     $stmt->execute(array($ISBN));
     if ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
@@ -48,7 +48,7 @@ if ($mode == 'modify'){
 <body>
 <div class="container mb-3">
     <h2 class="display-4"><?= $mode == 'insert' ? '책 등록' : '책 수정'?></h2>
-    <form class="row g-3 needs-validation" method="post" action="process.php?mode=<?= $mode ?>" novalidate>
+    <form class="row g-3 needs-validation" method="post" action="bookInfo_process.php?mode=<?= $mode ?>" novalidate>
         <div class="form-floating mb-3">
             <input type="text" class="form-control" maxlength="50" id="title" name="title" placeholder="책 제목" value ="<?= $title ?>" required>
             <label for="title" class="form-label">제목</label>
@@ -76,5 +76,8 @@ if ($mode == 'modify'){
         </div>
     </form>
 </body>
+<div class="d-grid d-md-flex justify-content-md-end">
+        <a href="booklist.php" class="btn btn-primary">뒤로가기</a>
+</div>
 <script src="main.js"></script>
 </html>

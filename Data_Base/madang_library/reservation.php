@@ -1,4 +1,5 @@
 <?php
+session_start();
 $tns = "
     (DESCRIPTION = 
         (ADDRESS_LIST= (ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521)))
@@ -8,13 +9,16 @@ $tns = "
 $dsn = "oci:dbname".$tns.";charset=utf8";    
 $username = 'c##madang';
 $password = 'madang';
-$searchWord = $_GET['searchWord'] ?? '';
+$cno = $_SESSION['cno'];
+
+
 try{
     $conn = new PDO($dsn, $username, $password);
 } catch (PDOException $e){
     echo ("에러 내용: ".$e -> getMessage());
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -27,53 +31,46 @@ try{
             text-decoration: none;  
         }
     </style>
-    <title>TEST</title>
+    <title>RESERVATION</title>
 </head>
 <body>
 <div class="container">
-    <h2 class="text-center">책 리스트</h2>
-
+<!-- 예약 도서 목록을 보여준다 -->
+    <h2 class="text-center">책 예약 기록</h2>
     </tbody>
     </table>
     <form class="row">
-        <div class="col-10">
-            <label for="searchWord" class="visually-hidden">Search Word</label>
-            <input type="text" class="form-control" id="searchWord" name="searchWord" placeholder="검색어 입력" value="<?= $searchWord ?>">
-        </div>
-        <div class="col-auto text-end">
-            <button type="dubmit" class="btn btn-primary mb-3">검색</button>
-        </div>
     </form>
 </div>
 </body>
-
     <table class="table table-bordered text-center">
         <thread>
             <tr>
-                
                 <th>ISBN</th>
                 <th>제목</th>
-                <th>출판사</th>
                 <th>작가</th>
+                <th>예약 날짜</th>
+                <th>예약 취소</th>
             </tr>
         </thread>
         <tbody>
-<?php
+        <?php
 $stmt = $conn -> 
-    prepare("SELECT E.ISBN, E.TITLE, E.PUBLISHER, A.AUTHOR FROM EBOOK E, AUTHORS A WHERE A.ISBN = E.ISBN AND LOWER(TITLE) LIKE '%' || :searchWord || '%' ORDER BY title");
-$stmt -> execute(array($searchWord));
+    prepare("SELECT R.ISBN as ISBN, E.TITLE as BOOK_TITLE, A.AUTHOR AS AUTHOR, R.RESERVATIONTIME AS RESERVED FROM RESERVATION R, AUTHORS A, EBOOK E WHERE R.CNO = {$cno} AND A.ISBN = R.ISBN AND E.ISBN = A.ISBN  ");
+$stmt -> execute();
 while ($row = $stmt -> fetch(PDO::FETCH_ASSOC)) {
 ?>
         <tr>
-            <td><a href="bookview.php?ISBN=<?= $row['ISBN'] ?>"><?= $row['ISBN'] ?></a></td>
-            <td><?= $row['TITLE'] ?></a></td>
-            <td><?= $row['PUBLISHER'] ?></td>
+            <td><?= $row['ISBN'] ?></td>
+            <td><?= $row['BOOK_TITLE'] ?></td>
             <td><?= $row['AUTHOR'] ?></td>
+            <td><?= $row['RESERVED'] ?></td>
+            <td><a href="reservation_process.php?ISBN=<?= $row['ISBN'] ?>">취소하기</a></td>
         </tr>
 <?php
 }
 ?>
+
 <div class="d-grid d-md-flex justify-content-md-end">
-        <a href="input.php?mode=insert" class="btn btn-primary">등록</a>
+        <a href="main.php" class="btn btn-primary">뒤로가기</a>
 </div>
-</html>

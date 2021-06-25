@@ -33,14 +33,10 @@ try{
 
 <body>
 <div class="container">
-    <h2 class="text-center">회원 전용 로그인</h2>
-        <!-- 회원가입 버튼 -->
-        <div class="d-grid d-md-flex justify-content-md-end">
-            <a href="signup.php" class="btn btn-primary">회원가입</a>
-        </div>
+    <h2 class="text-center">관리자 전용 로그인</h2>
     </tbody>
     </table>
-    <form method="POST" action="login_process.php"> 
+    <form method="POST" action="administor_process.php"> 
     <div class="w-50 ml-auto mr-auto mt-5">
         <!-- cno 입력 버튼 -->
         <div class="mb-3 ">
@@ -54,10 +50,6 @@ try{
         </div>
         <button type="submit" class="btn btn-primary mb-3">SIGN-IN</button>
     </div>
-     <!-- 관리자 계정 로그인 버튼 -->
-     <div class="d-grid d-md-flex justify-content-md-end">
-            <a href="administor.php" class="btn btn-primary">관리자로 접속</a>
-        </div>
     </form>
     
 </div>

@@ -64,13 +64,6 @@ try{
                 <input type="email" name="email" class="form-control" id="email" placeholder="이메일 주소를 입력하시오.">
             </div>
         </div>
-        
-         <!--
-                <form action="process.php?mode=delete" method="POST" class="row">
-                    <input type="hidden" name="ISBN" value="<?= $ISBN ?>">
-                    <button type="submit" class="btn btn-danger">삭제</button>
-                </form>
-            -->
             <button type="button" id="signup-button" class="btn btn-primary mb-3">SIGN-UP</button>
         </form>
     <script>
@@ -83,7 +76,7 @@ try{
                 signupForm.submit();
             }
             else{
-                alert("비밀번호가 서로 일치하지 않습니다");
+                alert("비밀번호가 다릅니다");
             }
         });
     </script>
