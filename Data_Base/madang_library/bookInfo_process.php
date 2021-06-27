@@ -15,7 +15,8 @@ $for_commit = $dbh -> prepare('commit');
 switch ($_GET['mode']){
     case 'insert':
         // insert ebook info
-        $stmt = $dbh -> prepare("INSERT INTO EBOOK (ISBN, TITLE, YEAR, PUBLISHER) VALUES ((SELECT NVL(MAX(ISBN), 0) + 1 FROM EBOOK), :title, :year, :publisher)");
+        $stmt = $dbh -> prepare("INSERT INTO EBOOK (ISBN, TITLE, YEAR, PUBLISHER) VALUES ((SELECT NVL(MAX(ISBN), 0) + 1 FROM EBOOK), 
+        :title, :year, :publisher)");
         $stmt -> bindParam(':title', $title);
         $stmt -> bindParam(':year', $year);
         $stmt -> bindParam(':publisher', $publisher);

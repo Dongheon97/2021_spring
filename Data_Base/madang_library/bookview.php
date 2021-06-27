@@ -14,7 +14,8 @@ try{
 } catch (PDOException $e){
     echo ("에러 내용: ".$e -> getMessage());
 }
-$stmt = $conn -> prepare("SELECT E.ISBN, E.TITLE, A.AUTHOR, TO_CHAR(E.YEAR, 'YYYY.MM.DD') AS YYDDMM, E.PUBLISHER, NVL(TO_CHAR(E.DATEDUE, 'YYYY.MM.DD'), 'X') AS RESERVATION FROM EBOOK E, AUTHORS A WHERE E.ISBN = A.ISBN AND E.ISBN = ?");
+$stmt = $conn -> prepare("SELECT E.ISBN, E.TITLE, A.AUTHOR, TO_CHAR(E.YEAR, 'YYYY.MM.DD') AS YYDDMM, 
+E.PUBLISHER, NVL(TO_CHAR(E.DATEDUE, 'YYYY.MM.DD'), 'X') AS RESERVATION FROM EBOOK E, AUTHORS A WHERE E.ISBN = A.ISBN AND E.ISBN = ?");
 $stmt -> execute(array($ISBN));
 $title = '';
 $author = '';

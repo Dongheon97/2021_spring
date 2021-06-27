@@ -31,8 +31,7 @@ if($row["CNO"] != 00000){
     header("LOCATION: main.php");
   }
   else{
-    echo "else?";
-    //header("LOCATION: signin.php");
+    header("LOCATION: signin.php");
 ?>
     <script>
       alert("로그인 실패");

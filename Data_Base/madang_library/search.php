@@ -1,4 +1,5 @@
 <?php
+session_start();
 $tns = "
     (DESCRIPTION = 
         (ADDRESS_LIST= (ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521)))
@@ -13,47 +14,9 @@ try{
 } catch (PDOException $e){
     echo ("에러 내용: ".$e -> getMessage());
 }
-$search_title = '';
-$search_author = '';
-$search_publisher = '';
-$search_year = '';
-$first_op = '';
-$second_op = '';
-$third_op = '';
+
+$cno = $_SESSION['cno'];
 ?>
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
-    <style>
-        a {
-            text-decoration: none;  
-        }
-    </style>
-    <title>SEARCHED BOOKS</title>
-</head>
-<body>
-<div class="container">
-    </tbody>
-    </table>
-    <form class="row">
-    </form>
-</div>
-</body>
-    <table class="table table-bordered text-center">
-        <thread>
-            <tr>
-                <th>ISBN</th>
-                <th>제목</th>
-                <th>작가</th>
-                <th>출판사</th>
-                <th>대출여부</th>                
-            </tr>
-        </thread>
-        <tbody>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -79,43 +42,72 @@ $third_op = '';
     </div>
     </tbody>
     </table>
-    <form method="POST" action="search.php"> 
+    <form method="POST" action="bookview_user.php"> 
     <div class="w-50 ml-auto mr-auto mt-5">
         <!-- 책 검색 버튼 -->
         <div class="mb-3 ">
             <label for="title" class="form-label">책 제목</label>
             <input name="title" type="text" class="form-control" id="title" placeholder="title">
         </div>
-        <!-- first operator 버튼 -->
+        <!-- title operator 버튼 -->
         <div class="mb-3 ">
-            <label for="first_op" class="form-label">first operator</label>
-            <input name="first_op" type="first_op" class="form-control" id="first_op" placeholder="and / or / not">
+            <label for="title_operator" class="form-label">제목 연산자</label>
+            <input name="title_operator" type="title_operator" class="form-control" id="title_operator" placeholder="and / or ">
         </div>
+        <!-- title not operator 버튼 -->
+        <div class="mb-3 ">
+            <label for="title_not" class="form-label">제목 not</label>
+            <input name="title_not" type="title_not" class="form-control" id="title_not" placeholder="not 또는 입력 없음">
+        </div>
+
         <!-- 작가 검색 버튼 -->
         <div class="mb-3 ">
             <label for="author" class="form-label">작가</label>
             <input name="author" type="author" class="form-control" id="author" placeholder="author">
         </div>
-        <!-- second operator 버튼 -->
+        <!-- author operator 버튼 -->
         <div class="mb-3 ">
-            <label for="second_op" class="form-label">second operator</label>
-            <input name="second_op" type="second_op" class="form-control" id="second_op" placeholder="and / or / not">
+            <label for="author_operator" class="form-label">작가 연산자</label>
+            <input name="author_operator" type="author_operator" class="form-control" id="author_operator" placeholder="and / or">
         </div>
+        <!-- author not operator 버튼 -->
+        <div class="mb-3 ">
+            <label for="author_not" class="form-label">작가 not</label>
+            <input name="author_not" type="author_not" class="form-control" id="author_not" placeholder="not 또는 입력 없음">
+        </div>
+
         <!-- publisher 검색 버튼 -->
         <div class="mb-3 ">
             <label for="publisher" class="form-label">출판사</label>
             <input name="publisher" type="publisher" class="form-control" id="publisher" placeholder="publisher">
         </div>
-        <!-- third operator 버튼 -->
+        <!-- publisher operator 버튼 -->
         <div class="mb-3 ">
-            <label for="third_op" class="form-label">third operator</label>
-            <input name="third_op" type="third_op" class="form-control" id="third_op" placeholder="and / or / not">
+            <label for="publisher_operator" class="form-label">출판사 연산자</label>
+            <input name="publisher_operator" type="publisher_operator" class="form-control" id="publisher_operator" placeholder="and / or">
         </div>
+      <!-- publisher not operator 버튼 -->
+        <div class="mb-3 ">
+            <label for="publisher_not" class="form-label">출판사 not</label>
+            <input name="publisher_not" type="publisher_not" class="form-control" id="publisher_not" placeholder="not 또는 입력 없음">
+        </div>
+
         <!-- 출판 일자 검색 버튼 -->
         <div class="mb-3 ">
             <label for="year" class="form-label">연도</label>
             <input name="year" type="year" class="form-control" id="year" placeholder="year">
         </div>
+        <!-- year operator 버튼 -->
+        <div class="mb-3 ">
+            <label for="year_operator" class="form-label">연도 연산자</label>
+            <input name="year_operator" type="year_operator" class="form-control" id="year_operator" placeholder="and / or">
+        </div>
+        <!-- year not operator 버튼 -->
+        <div class="mb-3 ">
+            <label for="year_not" class="form-label">연도 not</label>
+            <input name="year_not" type="year_not" class="form-control" id="year_not" placeholder="not 또는 입력 없음">
+        </div>
+
         <button type="submit" class="btn btn-primary mb-3">검색</button>
     </div>
     </form>

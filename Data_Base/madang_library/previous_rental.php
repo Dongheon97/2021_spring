@@ -55,7 +55,8 @@ try{
         <tbody>
         <?php
 $stmt = $conn -> 
-    prepare("SELECT P.ISBN as ISBN, E.TITLE as BOOK_TITLE, A.AUTHOR AS AUTHOR, P.DATERENTED AS DATERENTED, P.DATERETURNED AS DATERETURNED FROM PREVIOUS_RENTAL P, AUTHORS A, EBOOK E WHERE P.CNO = {$cno} AND A.ISBN = P.ISBN AND E.ISBN = A.ISBN  ");
+    prepare("SELECT P.ISBN as ISBN, E.TITLE as BOOK_TITLE, A.AUTHOR AS AUTHOR, P.DATERENTED AS DATERENTED, P.DATERETURNED AS DATERETURNED 
+    FROM PREVIOUS_RENTAL P, AUTHORS A, EBOOK E WHERE P.CNO = {$cno} AND A.ISBN = P.ISBN AND E.ISBN = A.ISBN  ");
 $stmt -> execute();
 while ($row = $stmt -> fetch(PDO::FETCH_ASSOC)) {
 ?>
@@ -92,7 +93,8 @@ while ($row = $stmt -> fetch(PDO::FETCH_ASSOC)) {
         <tbody>
         <?php
 $stmt = $conn -> 
-    prepare("SELECT E.ISBN as ISBN,  E.TITLE as BOOK_TITLE, A.AUTHOR AS AUTHOR, E.DATERENTED as RENTED, E.EXTTIMES AS EXTTIMES, E.DATEDUE AS DUE FROM AUTHORS A, EBOOK E WHERE E.CNO = {$cno} AND E.ISBN = A.ISBN");
+    prepare("SELECT E.ISBN as ISBN,  E.TITLE as BOOK_TITLE, A.AUTHOR AS AUTHOR, E.DATERENTED as RENTED, E.EXTTIMES AS EXTTIMES, E.DATEDUE AS DUE 
+    FROM AUTHORS A, EBOOK E WHERE E.CNO = {$cno} AND E.ISBN = A.ISBN");
 $stmt -> execute();
 while ($row = $stmt -> fetch(PDO::FETCH_ASSOC)) {
     //if($row['cno'] > 0){

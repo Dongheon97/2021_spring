@@ -54,9 +54,10 @@ try{
             </tr>
         </thread>
         <tbody>
-        <?php
+<?php
 $stmt = $conn -> 
-    prepare("SELECT R.ISBN as ISBN, E.TITLE as BOOK_TITLE, A.AUTHOR AS AUTHOR, R.RESERVATIONTIME AS RESERVED FROM RESERVATION R, AUTHORS A, EBOOK E WHERE R.CNO = {$cno} AND A.ISBN = R.ISBN AND E.ISBN = A.ISBN  ");
+    prepare("SELECT R.ISBN as ISBN, E.TITLE as BOOK_TITLE, A.AUTHOR AS AUTHOR, R.RESERVATIONTIME AS RESERVED 
+    FROM RESERVATION R, AUTHORS A, EBOOK E WHERE R.CNO = {$cno} AND A.ISBN = R.ISBN AND E.ISBN = A.ISBN  ");
 $stmt -> execute();
 while ($row = $stmt -> fetch(PDO::FETCH_ASSOC)) {
 ?>

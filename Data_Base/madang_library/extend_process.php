@@ -35,7 +35,7 @@ $extend = $row["EXTTIMES"];
 
 if($count == 0){
     if( 0<=$extend && $extend<=2){
-        $stmt = $conn -> prepare("UPDATE EBOOK SET EXTTIMES={$extend}+1 WHERE ISBN = {$ISBN}");
+        $stmt = $conn -> prepare("UPDATE EBOOK SET EXTTIMES={$extend}+1, DATEDUE = DATEDUE + 10 WHERE ISBN = {$ISBN}");
         $stmt -> execute();
 
 ?>
